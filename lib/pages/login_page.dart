@@ -97,6 +97,7 @@ class LoginPage extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
+                            // ignore: prefer_const_constructors
                             builder: (context) => ForgotPasswordPage(),
                           ),
                         );
