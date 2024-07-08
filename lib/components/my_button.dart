@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class MyButton extends StatelessWidget {
@@ -18,13 +17,15 @@ class MyButton extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         margin: const EdgeInsets.symmetric(horizontal: 25),
         decoration: BoxDecoration(
-          color: Colors.blue.shade500,
+          color: Theme.of(context).colorScheme.primary,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Center(
           child: Text(
             text,
-            style: const TextStyle(color: Colors.white),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.inversePrimary,
+            ),
           ),
         ),
       ),

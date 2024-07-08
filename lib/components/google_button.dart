@@ -1,5 +1,7 @@
-
 import 'package:flutter/material.dart';
+import 'package:main_project/Providers/theme_provider.dart';
+import 'package:provider/provider.dart';
+
 class GButton extends StatelessWidget {
   final Function()? onTap;
   const GButton({
@@ -9,13 +11,16 @@ class GButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // light vs dark mode for correct text color
+    bool isDarkMode =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.only(top: 15, bottom: 15),
         margin: const EdgeInsets.symmetric(horizontal: 25),
         decoration: BoxDecoration(
-          color: Colors.grey.shade300,
+          color: Theme.of(context).colorScheme.secondary,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -25,9 +30,12 @@ class GButton extends StatelessWidget {
               'https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png',
               scale: 20,
             ),
-            const Text(
+            Text(
               "Google",
               style: TextStyle(
+                color: isDarkMode
+                    ? Theme.of(context).colorScheme.inversePrimary
+                    : Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),

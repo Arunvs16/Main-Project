@@ -1,5 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:main_project/Providers/pages_provider.dart';
+import 'package:main_project/components/my_drawer.dart';
+import 'package:main_project/pages/chat_page.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -7,26 +11,37 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final pagesProvider = Provider.of<PagesProvider>(context);
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
+        foregroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Colors.transparent,
         centerTitle: true,
-        title: const Text("Home Page"),
+        title: Icon(
+          Icons.favorite,
+          color: Theme.of(context).colorScheme.primary,
+        ),
         actions: [
           IconButton(
             onPressed: () {
-              FirebaseAuth.instance.signOut();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatPage(),
+                ),
+              );
             },
-            icon: const Icon(
-              Icons.logout_outlined,
-            ),
-          ),
+            icon: Icon(Icons.message_outlined),
+          )
         ],
       ),
-      body: Center(
-        child: Text(
-          'Logged in as :' + user!.email.toString(),
-        ),
+      drawer: MyDrawer(
+        onTap: () {
+          Navigator.pushNamed(context, '/profilepage');
+        },
       ),
+      // body: ,
     );
   }
 }

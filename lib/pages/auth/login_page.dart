@@ -1,9 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/components/google_button.dart';
+import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/components/my_button.dart';
 import 'package:main_project/components/my_text_field.dart';
-import 'package:main_project/pages/forgot_pw_page.dart';
+import 'package:main_project/pages/auth/forgot_pw_page.dart';
 import 'package:main_project/services/google_sign_in.dart';
 
 class LoginPage extends StatelessWidget {
@@ -18,57 +19,65 @@ class LoginPage extends StatelessWidget {
   final passwordController = TextEditingController();
 
   // sign user in method
-  void signUserIn(BuildContext context) async {
+  void signInUser(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+    
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
-    } catch (e) {
-      showDialog(
-        context: context,
-        builder: (context) => const AlertDialog(
-          content: Text(
-            'Invalid',
-            textAlign: TextAlign.center,
-          ),
-        ),
-      );
+      // pop loading circle
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (error) {
+      // pop loading circle
+      Navigator.pop(context);
+
+      // show error message to user
+      displayMessageToUser(error.code, context);
     }
+    
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue.shade100,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        centerTitle: true,
-        title: const Text(
-          "SnapTalks",
-          style: TextStyle(
-            color: Colors.blue,
-          ),
-        ),
-      ),
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             children: [
+              const SizedBox(height: 20),
               // icon
+              Icon(
+                Icons.person,
+                size: 60,
+                color: Theme.of(context).colorScheme.primary,
+              ),
               // Image.asset(''),
-              const SizedBox(height: 30),
-              // Welcome text
+              const SizedBox(height: 10),
+              // app name
               const Text(
+                'Myapp',
+                style: TextStyle(fontSize: 20),
+              ),
+              const SizedBox(height: 10),
+              // Welcome text
+              Text(
                 'Welcome back you have been missed!',
                 style: TextStyle(
-                  color: Colors.blue,
-                  fontSize: 20,
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
 
-              const SizedBox(height: 150),
+              const SizedBox(height: 50),
 
               // email text field
               MyTextField(
@@ -76,7 +85,7 @@ class LoginPage extends StatelessWidget {
                 hintText: 'Email',
                 obscuretext: false,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
 
               // password Text field
               MyTextField(
@@ -88,7 +97,7 @@ class LoginPage extends StatelessWidget {
 
               // forgot password
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -102,10 +111,12 @@ class LoginPage extends StatelessWidget {
                           ),
                         );
                       },
-                      child: const Text(
+                      child: Text(
                         'Forgot Password?',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.red),
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.error,
+                        ),
                       ),
                     ),
                   ),
@@ -113,10 +124,10 @@ class LoginPage extends StatelessWidget {
               ),
               const SizedBox(height: 30),
 
-              // sign in button
+              // login button
               MyButton(
-                text: "Sign In",
-                onTap: () => signUserIn(context),
+                text: "Login",
+                onTap: () => signInUser(context),
               ),
 
               const SizedBox(height: 20),
@@ -124,14 +135,16 @@ class LoginPage extends StatelessWidget {
               Text(
                 'Or Continue With',
                 style: TextStyle(
-                  color: Colors.grey.shade700,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(
+                height: 20,
+              ),
               // google Sign In
               GButton(
-                onTap: () => AuthService().signInWithGoogle(),
+                onTap: () => GService().signInWithGoogle(),
               ),
               const SizedBox(height: 50),
 
@@ -139,17 +152,21 @@ class LoginPage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Not a Member?'),
+                  Text(
+                    'Not a Member?',
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.primary),
+                  ),
 
                   const SizedBox(width: 10),
 
                   // Register now
                   GestureDetector(
                     onTap: onTap,
-                    child: const Text(
+                    child: Text(
                       'Register Now',
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
