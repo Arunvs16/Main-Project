@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/components/google_button.dart';
@@ -6,31 +7,18 @@ import 'package:main_project/components/my_button.dart';
 import 'package:main_project/components/my_text_field.dart';
 import 'package:main_project/services/google_sign_in.dart';
 
-class RegisterPage extends StatefulWidget {
+class RegisterPage extends StatelessWidget {
   final Function()? onTap;
   RegisterPage({
     super.key,
     required this.onTap,
   });
 
-  @override
-  State<RegisterPage> createState() => _RegisterPageState();
-}
-
-class _RegisterPageState extends State<RegisterPage> {
   // text controllers
   final userNameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-    super.dispose();
-  }
 
   // sign up user method
   void signUp(BuildContext context) async {
@@ -51,13 +39,21 @@ class _RegisterPageState extends State<RegisterPage> {
     } else {
       //password match -> create user
       try {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        UserCredential userCredential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text,
           password: passwordController.text,
         );
+        // after creating the user, create a new document in the cloud firestore called users
+        FirebaseFirestore.instance
+            .collection("Users")
+            .doc(userCredential.user!.email)
+            .set({
+          'username': userNameController.text,
+        });
 
         // pop loading circle
-        Navigator.pop(context);
+        if (context.mounted) Navigator.pop(context);
       } on FirebaseAuthException catch (error) {
         // pop loading circle
         Navigator.pop(context);
@@ -167,7 +163,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                   // Register now
                   GestureDetector(
-                    onTap: widget.onTap,
+                    onTap: onTap,
                     child: Text(
                       'Login Now',
                       style: TextStyle(

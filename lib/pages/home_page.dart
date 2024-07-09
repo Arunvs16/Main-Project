@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/pages_provider.dart';
@@ -7,11 +8,14 @@ import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
+
+  //user
   final user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
     final pagesProvider = Provider.of<PagesProvider>(context);
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
@@ -36,12 +40,17 @@ class HomePage extends StatelessWidget {
           )
         ],
       ),
-      drawer: MyDrawer(
-        onTap: () {
-          Navigator.pushNamed(context, '/profilepage');
-        },
+      drawer: MyDrawer(),
+      body: Column(
+        children: [
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/comments');
+            },
+            icon: Icon(Icons.comment),
+          ),
+        ],
       ),
-      // body: ,
     );
   }
 }

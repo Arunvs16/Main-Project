@@ -33,7 +33,7 @@ class LoginPage extends StatelessWidget {
         password: passwordController.text,
       );
       // pop loading circle
-      Navigator.pop(context);
+      if(context.mounted) Navigator.pop(context);
     } on FirebaseAuthException catch (error) {
       // pop loading circle
       Navigator.pop(context);

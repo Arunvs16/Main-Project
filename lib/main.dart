@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/pages_provider.dart';
 import 'package:main_project/firebase_options.dart';
+import 'package:main_project/pages/comment_page.dart';
 import 'package:main_project/pages/help/app_info_page.dart';
 import 'package:main_project/pages/auth/auth_page.dart';
 import 'package:main_project/pages/help/help_page.dart';
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
         '/termsOfServices': (context) => TermsOfServices(),
         '/PrivacyPolicy': (context) => PrivacyPolicyPage(),
         '/appInfo': (context) => AppInfoPage(),
+        '/comments': (context) => CommentPage(),
       },
     );
   }

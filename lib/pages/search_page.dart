@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:main_project/components/my_text_field.dart';
 
 class SearchPage extends StatelessWidget {
-  const SearchPage({super.key});
+  SearchPage({super.key});
+  // text controller
+  final controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -10,6 +13,18 @@ class SearchPage extends StatelessWidget {
         foregroundColor: Theme.of(context).colorScheme.primary,
         backgroundColor: Colors.transparent,
         title: Text("Search Profile"),
+      ),
+      body: Column(
+        children: [
+          const SizedBox(
+            height: 50,
+          ),
+          MyTextField(
+            controller: controller,
+            hintText: "Search",
+            obscuretext: false,
+          ),
+        ],
       ),
     );
   }
