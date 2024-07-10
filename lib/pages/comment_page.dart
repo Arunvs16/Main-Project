@@ -86,7 +86,7 @@ class CommentPage extends StatelessWidget {
                 },
               ),
             ),
-            // post method
+
             Padding(
               padding: const EdgeInsets.all(25.0),
               child: Row(
@@ -105,10 +105,13 @@ class CommentPage extends StatelessWidget {
                       height: 50,
                       width: 50,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.secondary,
+                        color: Theme.of(context).colorScheme.primary,
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(Icons.send),
+                      child: Icon(
+                        Icons.send,
+                        color: Theme.of(context).colorScheme.inversePrimary,
+                      ),
                     ),
                   ),
                 ],

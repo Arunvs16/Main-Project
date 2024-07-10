@@ -87,9 +87,14 @@ class _CommentCardState extends State<CommentCard> {
                     style:
                         TextStyle(color: Theme.of(context).colorScheme.primary),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 2),
                   // Comment
-                  Text(widget.comment),
+                  Text(
+                    widget.comment,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -103,11 +108,13 @@ class _CommentCardState extends State<CommentCard> {
                     isLiked: isLiked,
                     onTap: toggleLike,
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+
                   // Likes count
-                  Text(widget.likes.length.toString()),
+                  Text(
+                    widget.likes.length.toString(),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.inversePrimary),
+                  ),
                 ],
               ),
             ],
