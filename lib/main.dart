@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/pages_provider.dart';
 import 'package:main_project/firebase_options.dart';
 import 'package:main_project/pages/comment_page.dart';
@@ -22,12 +23,9 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_) => ThemeProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (k) => PagesProvider(),
-        ),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => PagesProvider()),
+        Provider(create: (_) => UserDataProvider()),
       ],
       child: const MyApp(),
     ),

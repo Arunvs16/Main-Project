@@ -1,30 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/components/comment_card.dart';
 // import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/components/my_text_field.dart';
+import 'package:provider/provider.dart';
 
-class CommentPage extends StatefulWidget {
+class CommentPage extends StatelessWidget {
   // final postId;
   CommentPage({
     super.key,
     // required this.postId,
   });
 
-  @override
-  State<CommentPage> createState() => _CommentPageState();
-}
-
-class _CommentPageState extends State<CommentPage> {
   // user
   final currentUser = FirebaseAuth.instance.currentUser!;
 
   // text controller
   final textController = TextEditingController();
-  // CollectionReference posts = FirebaseFirestore.instance.collection("posts");
 
-  // post message
+  // CollectionReference posts = FirebaseFirestore.instance.collection("posts");
   void postMessage() {
     if (textController.text.isNotEmpty) {
       FirebaseFirestore.instance.collection("comments").add({
@@ -39,6 +35,7 @@ class _CommentPageState extends State<CommentPage> {
 
   @override
   Widget build(BuildContext context) {
+    final commentDataProvider = Provider.of<CommentDataProvider>(context);
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Theme.of(context).colorScheme.primary,
@@ -51,11 +48,7 @@ class _CommentPageState extends State<CommentPage> {
             // comments
             Expanded(
               child: StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    // .doc(widget.postId)
-                    .collection("comments")
-                    .orderBy("Timestamp", descending: true)
-                    .snapshots(),
+                stream: commentDataProvider.oderedDataStream,
                 builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError) {
                     return Center(

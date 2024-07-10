@@ -1,37 +1,26 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:main_project/components/my_text_field.dart';
 
-class ForgotPasswordPage extends StatefulWidget {
-  const ForgotPasswordPage({super.key});
+class ForgotPasswordPage extends StatelessWidget {
+  ForgotPasswordPage({Key? key}) : super(key: key);
 
-  @override
-  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
-}
-
-class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final emailController = TextEditingController();
 
-  @override
-  void dispose() {
-    emailController.dispose();
-    super.dispose();
-  }
-
   // reset password method
-  void passwordReset() async {
+  void passwordReset(BuildContext context) async {
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(
         email: emailController.text.trim(),
       );
+      // pop
+      if (context.mounted) Navigator.pop(context);
+
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: Text(
-            'Password reset email sent to ' +
-                emailController.text.toString().trim(),
-            textAlign: TextAlign.center,
+            'Password reset link sent to ${emailController.text}',
           ),
         ),
       );
@@ -40,23 +29,31 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
+          title: Text(
+            'Error occurred!',
+            textAlign: TextAlign.center,
+          ),
           content: Text(
-            'Error occured!',
+            e.message ?? 'Unknown error',
             textAlign: TextAlign.center,
           ),
         ),
       );
     }
+    emailController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue.shade300,
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
+        foregroundColor: Theme.of(context).colorScheme.primary,
         backgroundColor: Colors.transparent,
         centerTitle: true,
-        title: Text('Forgot Password Page'),
+        title: Text(
+          "Forgot Password",
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -67,47 +64,33 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
               child: Text(
-                "Enter your email and we will send you password reset link ",
-                style: TextStyle(fontSize: 15),
+                "Enter your email and we will send you a password reset link",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
                 textAlign: TextAlign.center,
               ),
             ),
 
             // email textfield
-
-            const SizedBox(
-              height: 30,
-            ),
-            TextField(
+            SizedBox(height: 30),
+            MyTextField(
               controller: emailController,
-              decoration: InputDecoration(
-                hintText: 'Email',
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.grey.shade700,
-                  ),
-                ),
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.white,
-                  ),
-                ),
-                fillColor: Colors.grey.shade300,
-                filled: true,
-                hintStyle: const TextStyle(
-                  color: Colors.grey,
-                ),
-              ),
+              hintText: 'Email',
+              obscuretext: false,
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
 
             // send button
             MaterialButton(
-              onPressed: passwordReset,
-              color: Colors.grey.shade300,
-              child: Text('Reset Password'),
+              onPressed: () => passwordReset(context), // Pass context here
+              color: Theme.of(context).colorScheme.primary,
+              child: Text(
+                'Reset Password',
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.inversePrimary),
+              ),
             ),
           ],
         ),
