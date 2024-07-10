@@ -27,4 +27,9 @@ class CommentDataProvider {
         .orderBy("Timestamp", descending: true)
         .snapshots();
   }
+
+  // stream of data from firestore document
+  Stream<DocumentSnapshot> get documentStream {
+    return _firestore.collection("comments").doc().snapshots();
+  }
 }

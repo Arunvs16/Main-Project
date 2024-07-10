@@ -66,7 +66,7 @@ class CommentPage extends StatelessWidget {
                   } else if (snapshot.hasData) {
                     final List<DocumentSnapshot> docs = snapshot.data!.docs;
                     return ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
+                      itemCount: docs.length,
                       itemBuilder: (context, index) {
                         final DocumentSnapshot post = docs[index];
                         return CommentCard(

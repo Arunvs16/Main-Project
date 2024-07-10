@@ -26,6 +26,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => PagesProvider()),
         Provider(create: (_) => UserDataProvider()),
+        Provider(create: (_) => CommentDataProvider()),
       ],
       child: const MyApp(),
     ),
