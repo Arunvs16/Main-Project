@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:main_project/Providers/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 class LikeButton extends StatelessWidget {
   final bool isLiked;
@@ -11,14 +13,16 @@ class LikeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
     return GestureDetector(
       onTap: onTap,
-      child: Icon(
-        isLiked ? Icons.favorite : Icons.favorite_border,
-        color: isLiked
-            ? Theme.of(context).colorScheme.error
-            : Theme.of(context).colorScheme.primary,
-      ),
+      child: Icon(isLiked ? Icons.favorite : Icons.favorite_border,
+          color: isLiked
+              ? Theme.of(context).colorScheme.error
+              : isDarkMode
+                  ? Theme.of(context).colorScheme.inversePrimary
+                  : Theme.of(context).colorScheme.primary),
     );
   }
 }

@@ -1,28 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/components/my_list_tile.dart';
+import 'package:provider/provider.dart';
 
-class MyDrawer extends StatefulWidget {
-  MyDrawer({super.key});
-
-  @override
-  State<MyDrawer> createState() => _MyDrawerState();
-}
-
-class _MyDrawerState extends State<MyDrawer> {
+class MyDrawer extends StatelessWidget {
   void Function()? onTap;
+  MyDrawer({super.key, required this.onTap});
+
   // user
   final currentUser = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
+    final userDataProvider = Provider.of<UserDataProvider>(context);
     return StreamBuilder<DocumentSnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection("Users")
-          .doc(currentUser.email)
-          .snapshots(),
+      stream: userDataProvider.documentStream,
       builder: (context, snapshot) {
         // get user data
         if (snapshot.hasData) {
@@ -36,42 +31,53 @@ class _MyDrawerState extends State<MyDrawer> {
                   children: [
                     // drawer header
                     //logo
-                    GestureDetector(
+                    InkWell(
                       onTap: onTap,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           DrawerHeader(
-                            decoration: BoxDecoration(),
-                            child: CircleAvatar(
-                              backgroundColor: Colors.transparent,
-                              radius: 40,
-                              child: Image.network(
-                                "https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png",
+                            child: Container(
+                              decoration: BoxDecoration(),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                      "https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png",
+                                    ),
+                                    backgroundColor: Colors.transparent,
+                                    radius: 40,
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "@" + userData['username'],
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary),
+                                      ),
+                                      const SizedBox(
+                                        height: 8,
+                                      ),
+                                      // email id
+                                      Text(
+                                        currentUser.email.toString(),
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            fontSize: 16),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
-                          Column(
-                            children: [
-                              // username
-                              Text(
-                                '@' + userData["username"],
-                                style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    fontSize: 20),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              // email id
-                              Text(
-                                currentUser.email.toString(),
-                                style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    fontSize: 16),
-                              ),
-                            ],
                           ),
                         ],
                       ),

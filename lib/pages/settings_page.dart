@@ -9,7 +9,7 @@ import 'package:main_project/Providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
-   SettingsPage({super.key});
+  SettingsPage({super.key});
 
   // user
   final currentUser = FirebaseAuth.instance.currentUser!;
@@ -36,24 +36,30 @@ class SettingsPage extends StatelessWidget {
                 Column(
                   children: [
                     // display profile
-                    Padding(
-                      padding: EdgeInsets.only(left: 5.0),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          child: Image.network(
-                            "https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png",
-                          ),
-                          radius: 50,
+                    InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/profilepage');
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Colors.transparent,
+                              radius: 50,
+                              child: Image.network(
+                                "https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png",
+                              ),
+                            ),
+                            Text(
+                              "@" + userData['username'],
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: Theme.of(context).colorScheme.primary),
+                            ),
+                          ],
                         ),
-                        title: Text(
-                          "@" + userData['username'],
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary),
-                        ),
-                        onTap: () {
-                          Navigator.pushNamed(context, '/profilepage');
-                        },
                       ),
                     ),
                     const SizedBox(

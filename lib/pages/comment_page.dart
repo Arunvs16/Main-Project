@@ -2,17 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
-import 'package:main_project/components/comment_card.dart';
-// import 'package:main_project/components/helper_function.dart';
-import 'package:main_project/components/my_text_field.dart';
 import 'package:provider/provider.dart';
+import 'package:main_project/components/comment_card.dart';
+import 'package:main_project/components/my_text_field.dart';
 
 class CommentPage extends StatelessWidget {
-  // final postId;
-  CommentPage({
-    super.key,
-    // required this.postId,
-  });
+  CommentPage({super.key});
 
   // user
   final currentUser = FirebaseAuth.instance.currentUser!;
@@ -20,15 +15,10 @@ class CommentPage extends StatelessWidget {
   // text controller
   final textController = TextEditingController();
 
-  // CollectionReference posts = FirebaseFirestore.instance.collection("posts");
-  void postMessage() {
+  void postMessage(BuildContext context) {
     if (textController.text.isNotEmpty) {
-      FirebaseFirestore.instance.collection("comments").add({
-        'username': currentUser.email,
-        'comment': textController.text,
-        'likes': [],
-        'Timestamp': Timestamp.now(),
-      });
+      Provider.of<CommentDataProvider>(context, listen: false)
+          .postComment(textController.text, currentUser.email!);
     }
     textController.clear();
   }
@@ -36,6 +26,7 @@ class CommentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final commentDataProvider = Provider.of<CommentDataProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Theme.of(context).colorScheme.primary,
@@ -48,7 +39,7 @@ class CommentPage extends StatelessWidget {
             // comments
             Expanded(
               child: StreamBuilder(
-                stream: commentDataProvider.oderedDataStream,
+                stream: commentDataProvider.orderedDataStream,
                 builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError) {
                     return Center(
@@ -56,8 +47,7 @@ class CommentPage extends StatelessWidget {
                         "Error: ${snapshot.error}",
                       ),
                     );
-                  } else if (snapshot.connectionState ==
-                      ConnectionState.waiting) {
+                  } else if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(
                       child: CircularProgressIndicator(
                         color: Theme.of(context).colorScheme.primary,
@@ -86,7 +76,6 @@ class CommentPage extends StatelessWidget {
                 },
               ),
             ),
-
             Padding(
               padding: const EdgeInsets.all(25.0),
               child: Row(
@@ -94,13 +83,13 @@ class CommentPage extends StatelessWidget {
                   Expanded(
                     child: MyTextField(
                       controller: textController,
-                      hintText: "Type somthimg",
+                      hintText: "Type something",
                       obscuretext: false,
                     ),
                   ),
                   // post icon
                   GestureDetector(
-                    onTap: postMessage,
+                    onTap: () => postMessage(context),
                     child: Container(
                       height: 50,
                       width: 50,
@@ -110,7 +99,7 @@ class CommentPage extends StatelessWidget {
                       ),
                       child: Icon(
                         Icons.send,
-                        color: Theme.of(context).colorScheme.inversePrimary,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                   ),
@@ -118,7 +107,10 @@ class CommentPage extends StatelessWidget {
               ),
             ),
             // logged in as
-            Text("Logged in as: ${currentUser.email}"),
+            Text(
+              "Logged in as: ${currentUser.email}",
+              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+            ),
             const SizedBox(
               height: 20,
             ),

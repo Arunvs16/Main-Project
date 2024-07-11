@@ -20,7 +20,7 @@ class GButton extends StatelessWidget {
         padding: const EdgeInsets.only(top: 15, bottom: 15),
         margin: const EdgeInsets.symmetric(horizontal: 25),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondary,
+          color: Theme.of(context).colorScheme.primary,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -33,9 +33,7 @@ class GButton extends StatelessWidget {
             Text(
               "Google",
               style: TextStyle(
-                color: isDarkMode
-                    ? Theme.of(context).colorScheme.inversePrimary
-                    : Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.inversePrimary,
                 fontWeight: FontWeight.bold,
               ),
             ),

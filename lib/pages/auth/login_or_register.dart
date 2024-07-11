@@ -1,37 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:main_project/Providers/auth_page_provider.dart';
 import 'package:main_project/pages/auth/login_page.dart';
 import 'package:main_project/pages/auth/register_page.dart';
+import 'package:provider/provider.dart';
 
-class LoginOrRegister extends StatefulWidget {
+class LoginOrRegister extends StatelessWidget {
   const LoginOrRegister({super.key});
 
   @override
-  State<LoginOrRegister> createState() => _LoginOrRegisterState();
-}
-
-class _LoginOrRegisterState extends State<LoginOrRegister> {
-  //initially show the login screen
-
-  bool showLoginPage = true;
-
-  //toggle between login and register page
-
-  void togglepage() {
-    setState(() {
-      showLoginPage = !showLoginPage;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    if (showLoginPage) {
-      return LoginPage(
-        onTap: togglepage,
-      );
-    } else {
-      return RegisterPage(
-        onTap: togglepage,
-      );
-    }
+    final authPageProvider = Provider.of<AuthPageProvider>(context);
+    return authPageProvider.showLoginPage
+        ? LoginPage(onTap: authPageProvider.togglePage)
+        : RegisterPage(onTap: authPageProvider.togglePage);
   }
 }

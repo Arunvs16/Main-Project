@@ -6,7 +6,7 @@ import 'package:main_project/components/helper_function.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatelessWidget {
-   ProfilePage({super.key});
+  ProfilePage({super.key});
 
   // user
   final currentUser = FirebaseAuth.instance.currentUser!;
@@ -18,6 +18,14 @@ class ProfilePage extends StatelessWidget {
       appBar: AppBar(
         foregroundColor: Theme.of(context).colorScheme.primary,
         backgroundColor: Colors.transparent,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/settings');
+            },
+            icon: Icon(Icons.settings),
+          ),
+        ],
       ),
       body: StreamBuilder<DocumentSnapshot>(
         stream: userDataProvider.documentStream,
@@ -42,7 +50,7 @@ class ProfilePage extends StatelessWidget {
                     maxRadius: 55,
                     backgroundColor: Colors.transparent,
                   ),
-                  GestureDetector(
+                  InkWell(
                     child: Center(
                       child: Container(
                         height: 30,

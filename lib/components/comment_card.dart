@@ -1,9 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:main_project/Providers/firestore_provider.dart';
+import 'package:main_project/Providers/theme_provider.dart';
 import 'package:main_project/components/like_button.dart';
+import 'package:provider/provider.dart';
 
-class CommentCard extends StatefulWidget {
+class CommentCard extends StatelessWidget {
   final String comment;
   final String username;
   final String postID;
@@ -18,51 +20,21 @@ class CommentCard extends StatefulWidget {
   });
 
   @override
-  State<CommentCard> createState() => _CommentCardState();
-}
-
-class _CommentCardState extends State<CommentCard> {
-  final currentUser = FirebaseAuth.instance.currentUser!;
-  bool isLiked = false;
-
-  @override
-  void initState() {
-    super.initState();
-    isLiked = widget.likes.contains(currentUser.email);
-  }
-
-  // Toggle like
-  void toggleLike() {
-    setState(() {
-      isLiked = !isLiked;
-    });
-
-    // Update likes in Firestore
-    DocumentReference postRef =
-        FirebaseFirestore.instance.collection("comments").doc(widget.postID);
-
-    if (isLiked) {
-      // if the post is now liked, add the user's email to "likes" field
-      postRef.update({
-        'likes': FieldValue.arrayUnion([currentUser.email])
-      });
-    } else {
-      // if the post is now unliked, remove the user's email from the "likes" field
-      postRef.update({
-        'likes': FieldValue.arrayRemove([currentUser.email])
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser!;
+    final isLiked = likes.contains(currentUser.email);
+    final commentDataProvider =
+        Provider.of<CommentDataProvider>(context, listen: false);
+    bool isDarkMode =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
+
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.tertiary,
+        color: Theme.of(context).colorScheme.secondary,
         borderRadius: BorderRadius.circular(8),
       ),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      margin: EdgeInsets.all(20),
+      margin: EdgeInsets.all(10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -83,17 +55,20 @@ class _CommentCardState extends State<CommentCard> {
                 children: [
                   // Username
                   Text(
-                    widget.username,
-                    style:
-                        TextStyle(color: Theme.of(context).colorScheme.primary),
+                    username,
+                    style: TextStyle(
+                        color: isDarkMode
+                            ? Theme.of(context).colorScheme.inversePrimary
+                            : Theme.of(context).colorScheme.primary),
                   ),
                   const SizedBox(height: 2),
                   // Comment
                   Text(
-                    widget.comment,
+                    comment,
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                        color: isDarkMode
+                            ? Theme.of(context).colorScheme.inversePrimary
+                            : Theme.of(context).colorScheme.primary),
                   ),
                 ],
               ),
@@ -106,14 +81,18 @@ class _CommentCardState extends State<CommentCard> {
                   // Likes
                   LikeButton(
                     isLiked: isLiked,
-                    onTap: toggleLike,
+                    onTap: () {
+                      commentDataProvider.toggleLike(
+                          postID, currentUser.email!, !isLiked);
+                    },
                   ),
-
                   // Likes count
                   Text(
-                    widget.likes.length.toString(),
+                    likes.length.toString(),
                     style: TextStyle(
-                        color: Theme.of(context).colorScheme.inversePrimary),
+                        color: isDarkMode
+                            ? Theme.of(context).colorScheme.inversePrimary
+                            : Theme.of(context).colorScheme.primary),
                   ),
                 ],
               ),
