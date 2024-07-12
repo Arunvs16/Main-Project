@@ -6,7 +6,7 @@ ThemeData lightmode = ThemeData(
     background: Colors.grey.shade300,
     primary: Colors.grey.shade800,
     secondary: Colors.grey.shade200,
-    tertiary: Colors.grey.shade100,
+    tertiary: Colors.grey.shade700,
     inversePrimary: Colors.grey.shade200,
     error: Colors.red,
     surface: Colors.blue,

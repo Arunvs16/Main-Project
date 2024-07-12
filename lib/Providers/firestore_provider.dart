@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:main_project/Providers/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 class UserDataProvider {
   // user
@@ -9,9 +11,92 @@ class UserDataProvider {
   // firestore instance
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // all users
+  final userCollection = FirebaseFirestore.instance.collection("Users");
+
   // stream of data from firestore document
   Stream<DocumentSnapshot> get documentStream {
     return _firestore.collection("Users").doc(currentUser.email).snapshots();
+  }
+
+  void editField(BuildContext context, String field) async {
+    String newValue = "";
+    bool isDarkMode =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
+    bool saveClicked = false; // Flag to check if save button is clicked
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        title: Text(
+          "Edit $field",
+          style: TextStyle(
+              color: isDarkMode
+                  ? Theme.of(context).colorScheme.inversePrimary
+                  : Theme.of(context).colorScheme.primary),
+        ),
+        content: TextField(
+          autofocus: true,
+          style: TextStyle(
+              color: isDarkMode
+                  ? Theme.of(context).colorScheme.inversePrimary
+                  : Theme.of(context).colorScheme.primary),
+          decoration: InputDecoration(
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: isDarkMode
+                    ? Theme.of(context).colorScheme.inversePrimary
+                    : Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            fillColor: isDarkMode
+                ? Theme.of(context).colorScheme.secondary
+                : Theme.of(context).colorScheme.tertiary,
+            hintText: "Add new $field",
+            hintStyle: TextStyle(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+          onChanged: (value) {
+            newValue = value;
+          },
+        ),
+        actions: [
+          // cancel button
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              "Cancel",
+              style: TextStyle(
+                  color: isDarkMode
+                      ? Theme.of(context).colorScheme.inversePrimary
+                      : Theme.of(context).colorScheme.primary),
+            ),
+          ),
+
+          // save button
+          TextButton(
+            onPressed: () {
+              saveClicked = true; // Set the flag when save button is clicked
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              "Save",
+              style: TextStyle(
+                  color: isDarkMode
+                      ? Theme.of(context).colorScheme.inversePrimary
+                      : Theme.of(context).colorScheme.primary),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    // update in firestore only if save button was clicked
+    if (saveClicked && newValue.trim().isNotEmpty) {
+      await userCollection.doc(currentUser.email).update({field: newValue});
+    }
   }
 }
 
@@ -21,7 +106,9 @@ class CommentDataProvider with ChangeNotifier {
 
   // Stream to get ordered comments from Firestore
   Stream<QuerySnapshot> get orderedDataStream {
-    return commentsCollection.orderBy('Timestamp', descending: true).snapshots();
+    return commentsCollection
+        .orderBy('Timestamp', descending: true)
+        .snapshots();
   }
 
   // Method to post a new comment

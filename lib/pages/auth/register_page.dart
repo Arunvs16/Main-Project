@@ -45,11 +45,12 @@ class RegisterPage extends StatelessWidget {
           password: passwordController.text,
         );
         // after creating the user, create a new document in the cloud firestore called users
-        FirebaseFirestore.instance
+        await FirebaseFirestore.instance
             .collection("Users")
             .doc(userCredential.user!.email)
             .set({
           'username': userNameController.text,
+          'bio': "Add bio",
         });
 
         // pop loading circle
