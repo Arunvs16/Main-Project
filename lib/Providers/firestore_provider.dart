@@ -135,7 +135,42 @@ class CommentDataProvider with ChangeNotifier {
         'likes': FieldValue.arrayRemove([userEmail])
       });
     }
+    notifyListeners();
+  }
+}
 
+class PostLikeProvider extends ChangeNotifier {
+  final CollectionReference likeCollection =
+      FirebaseFirestore.instance.collection("User likes");
+
+  // Stream to get ordered likes from Firestore
+  Stream<QuerySnapshot> get orderedDataStream {
+    return likeCollection.orderBy('Timestamp', descending: true).snapshots();
+  }
+
+  void postLike(String message, String username) {
+    likeCollection.add({
+      'username': username,
+      'message': message,
+      'likes': [],
+      'Timestamp': Timestamp.now(),
+    });
+    notifyListeners();
+  }
+
+  // Method to like or unlike a comment
+  Future<void> toggleLike(String postId, String userEmail, bool isLiked) async {
+    DocumentReference postRef = likeCollection.doc(postId);
+
+    if (isLiked) {
+      await postRef.update({
+        'likes': FieldValue.arrayUnion([userEmail])
+      });
+    } else {
+      await postRef.update({
+        'likes': FieldValue.arrayRemove([userEmail])
+      });
+    }
     notifyListeners();
   }
 }

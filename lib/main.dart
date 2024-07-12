@@ -26,6 +26,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthPageProvider()),
         ChangeNotifierProvider(create: (_) => CommentDataProvider()),
+        ChangeNotifierProvider(create: (_) => PostLikeProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => PagesProvider()),
         Provider(create: (_) => UserDataProvider()),

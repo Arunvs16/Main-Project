@@ -15,7 +15,7 @@ class CommentPage extends StatelessWidget {
   // text controller
   final textController = TextEditingController();
 
-  void postMessage(BuildContext context) {
+  void postComment(BuildContext context) {
     if (textController.text.isNotEmpty) {
       Provider.of<CommentDataProvider>(context, listen: false)
           .postComment(textController.text, currentUser.email!);
@@ -89,7 +89,7 @@ class CommentPage extends StatelessWidget {
                   ),
                   // post icon
                   GestureDetector(
-                    onTap: () => postMessage(context),
+                    onTap: () => postComment(context),
                     child: Container(
                       height: 50,
                       width: 50,
