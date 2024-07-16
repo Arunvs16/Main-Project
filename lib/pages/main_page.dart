@@ -2,8 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/pages_provider.dart';
 import 'package:main_project/components/bottom_nav_bar.dart';
-import 'package:main_project/pages/home_page.dart';
 import 'package:main_project/pages/add_post_page.dart';
+import 'package:main_project/pages/home_page.dart';
+<<<<<<< HEAD
+import 'package:main_project/pages/add_post_page.dart';
+=======
+>>>>>>> b081e2adc273a62b6a4b8becaee7f6f3eb0974cd
 import 'package:main_project/pages/profile_page.dart';
 import 'package:main_project/pages/search_page.dart';
 import 'package:provider/provider.dart';

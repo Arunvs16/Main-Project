@@ -122,6 +122,12 @@ class CommentDataProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  Future<int> getDocumentCount() async {
+    QuerySnapshot snapshot = await _firestore.collection('comments').get();
+    return snapshot.docs.length;
+  }
+
   // Method to like or unlike a comment
   Future<void> toggleLike(String postId, String userEmail, bool isLiked) async {
     DocumentReference postRef = commentsCollection.doc(postId);

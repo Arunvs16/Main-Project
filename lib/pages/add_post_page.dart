@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:main_project/utils/cropped_image.dart';
@@ -112,5 +113,14 @@ class _AddPostPageState extends State<AddPostPage> {
         ),
       ),
     );
+=======
+
+class AddPostPage extends StatelessWidget {
+  const AddPostPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+>>>>>>> b081e2adc273a62b6a4b8becaee7f6f3eb0974cd
   }
 }

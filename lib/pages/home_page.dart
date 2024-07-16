@@ -29,6 +29,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final postLikeProvider = Provider.of<PostLikeProvider>(context);
+    final commentDataProvider = Provider.of<CommentDataProvider>(context);
     bool isDarkMode =
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
     return Scaffold(
@@ -62,82 +63,6 @@ class HomePage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Expanded(
-            child: StreamBuilder(
-              stream: postLikeProvider.orderedDataStream,
-              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      "Error: ${snapshot.error}",
-                    ),
-                  );
-                } else if (snapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  );
-                } else if (snapshot.hasData) {
-                  final List<DocumentSnapshot> docs = snapshot.data!.docs;
-                  return ListView.builder(
-                    itemCount: docs.length,
-                    itemBuilder: (context, index) {
-                      final DocumentSnapshot post = docs[index];
-                      final List<String> likes =
-                          List<String>.from(post['likes'] ?? []);
-                      final bool isLiked = likes.contains(user.email);
-                      return Column(
-                        children: [
-                          // user name
-                          Text(post['username']),
-
-                          // message
-                          Text(post['message']),
-
-                          // comment icon
-                          IconButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/comments');
-                            },
-                            icon: Icon(Icons.comment),
-                          ),
-
-                          // comment count
-                          Text("Comment count"),
-
-                          // like icon
-                          LikeButton(
-                            isLiked: isLiked,
-                            onTap: () {
-                              postLikeProvider.toggleLike(
-                                  post.id, user.email!, !isLiked);
-                            },
-                          ),
-
-                          // Likes count
-                          Text(
-                            likes.length.toString(),
-                            style: TextStyle(
-                                color: isDarkMode
-                                    ? Theme.of(context)
-                                        .colorScheme
-                                        .inversePrimary
-                                    : Theme.of(context).colorScheme.primary),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                } else {
-                  return Center(
-                    child: Text("No data found"),
-                  );
-                }
-              },
-            ),
-          ),
           Padding(
             padding: const EdgeInsets.all(25.0),
             child: Row(
@@ -145,7 +70,7 @@ class HomePage extends StatelessWidget {
                 Expanded(
                   child: MyTextField(
                     controller: postController,
-                    hintText: "Type something",
+                    hintText: "Type something to share",
                     obscuretext: false,
                   ),
                 ),
@@ -168,6 +93,124 @@ class HomePage extends StatelessWidget {
               ],
             ),
           ),
+          Expanded(
+            child: StreamBuilder(
+              stream: postLikeProvider.orderedDataStream,
+              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      "Error: ${snapshot.error}",
+                    ),
+                  );
+                } else if (snapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  );
+                } else if (snapshot.hasData) {
+                  final List<DocumentSnapshot> docs = snapshot.data!.docs;
+
+                  return ListView.builder(
+                    itemCount: docs.length,
+                    itemBuilder: (context, index) {
+                      final DocumentSnapshot post = docs[index];
+
+                      final List<String> likes =
+                          List<String>.from(post['likes'] ?? []);
+                      final bool isLiked = likes.contains(user.email);
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // user name
+                          Text(
+                            post['username'],
+                            style: TextStyle(
+                              color: isDarkMode
+                                  ? Theme.of(context).colorScheme.inversePrimary
+                                  : Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+
+                          // message
+                          Text(
+                            post['message'],
+                            style: TextStyle(
+                              color: isDarkMode
+                                  ? Theme.of(context).colorScheme.inversePrimary
+                                  : Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  // like icon
+                                  LikeButton(
+                                    isLiked: isLiked,
+                                    onTap: () {
+                                      postLikeProvider.toggleLike(
+                                          post.id, user.email!, !isLiked);
+                                    },
+                                  ),
+
+                                  // Likes count
+                                  Text(
+                                    likes.length.toString(),
+                                    style: TextStyle(
+                                      color: isDarkMode
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .inversePrimary
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  // comment icon
+                                  IconButton(
+                                    onPressed: () {
+                                      Navigator.pushNamed(context, '/comments');
+                                    },
+                                    icon: Icon(
+                                      Icons.insert_comment_rounded,
+                                      color: isDarkMode
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .inversePrimary
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                    ),
+                                  ),
+                                  // space
+                                  Text(''),
+                                ],
+                              )
+                            ],
+                          )
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  return Center(
+                    child: Text("No data found"),
+                  );
+                }
+              },
+            ),
+          ),
+
           // logged in as
           Text(
             "Logged in as: ${user.email}",

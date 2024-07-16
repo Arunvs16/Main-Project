@@ -3,8 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/theme_provider.dart';
+import 'package:main_project/Providers/user_provider.dart';
 import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/components/my_text_box.dart';
+import 'package:main_project/model/user_model.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -16,6 +18,7 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userDataProvider = Provider.of<UserDataProvider>(context);
+    UserModel userModel = Provider.of<UserProvider>(context).userModel!;
     bool isDarkMode =
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
     return Scaffold(
@@ -65,6 +68,7 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                   ),
+<<<<<<< HEAD
                   const SizedBox(height: 10),
         
                   // username
@@ -120,6 +124,28 @@ class ProfilePage extends StatelessWidget {
             }
             return Center(
               child: CircularProgressIndicator(),
+=======
+                ),
+
+                // bio
+                MyTextBox(
+                  bioHeader: "Bio :",
+                  bio: userData['bio'],
+                  onPressed: () {
+                    userDataProvider.editField(context, "bio");
+                  },
+                  onTap: () {
+                    userDataProvider.editField(context, "bio");
+                  },
+                ),
+                // My posts
+
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('My posts'),
+                )
+              ],
+>>>>>>> b081e2adc273a62b6a4b8becaee7f6f3eb0974cd
             );
           },
         ),

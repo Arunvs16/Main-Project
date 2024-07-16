@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:main_project/Providers/auth_page_provider.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/pages_provider.dart';
+import 'package:main_project/Providers/user_provider.dart';
 import 'package:main_project/firebase_options.dart';
 import 'package:main_project/pages/comment_page.dart';
 import 'package:main_project/pages/help/app_info_page.dart';
@@ -26,6 +27,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthPageProvider()),
         ChangeNotifierProvider(create: (_) => CommentDataProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => PostLikeProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => PagesProvider()),

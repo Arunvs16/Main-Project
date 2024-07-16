@@ -44,8 +44,14 @@ dependencies:
   provider: ^6.1.2
   iconsax: ^0.0.8
   uuid: ^4.4.2
+<<<<<<< HEAD
   image_picker: ^1.1.2
   image_cropper: ^7.1.0
+=======
+  image_stack:
+  gap: ^3.0.1
+  image_picker: ^1.1.2
+>>>>>>> b081e2adc273a62b6a4b8becaee7f6f3eb0974cd
 
 dev_dependencies:
   flutter_test:

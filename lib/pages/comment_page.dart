@@ -47,7 +47,8 @@ class CommentPage extends StatelessWidget {
                         "Error: ${snapshot.error}",
                       ),
                     );
-                  } else if (snapshot.connectionState == ConnectionState.waiting) {
+                  } else if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
                     return Center(
                       child: CircularProgressIndicator(
                         color: Theme.of(context).colorScheme.primary,

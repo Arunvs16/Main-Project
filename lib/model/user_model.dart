@@ -7,8 +7,8 @@ class UserModel {
   String email;
   String bio;
   String pic;
-  String followers;
-  String following;
+  List followers;
+  List following;
 
   UserModel({
     required this.uid,
