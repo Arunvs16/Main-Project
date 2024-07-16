@@ -1,50 +1,46 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class PostModel {
-  String uid;
-  String name;
-  String username;
-  String pic;
-  String description;
-  String postID;
-  String postImage;
-  Timestamp date;
-  dynamic like;
+class Post {
+  final DocumentReference reference;
+  final String? id;
+  final String? title;
+  final String? creatorId;
+  final String? creatorImageId;
+  final String? imagePathId;
+  final List<String>? likedBy;
+  final int? totalLikes;
+  final int? totalComments;
+  final int? timestamp;
 
-  PostModel({
-    required this.uid,
-    required this.name,
-    required this.username,
-    required this.pic,
-    required this.description,
-    required this.postID,
-    required this.postImage,
-    required this.date,
-    required this.like,
+  Post({
+    required this.reference,
+    required this.id,
+    required this.title,
+    required this.creatorId,
+    required this.creatorImageId,
+    required this.imagePathId,
+    required this.likedBy,
+    required this.totalLikes,
+    required this.totalComments,
+    required this.timestamp,
   });
-  factory PostModel.FromJson(DocumentSnapshot doc) {
-    var data = doc.data() as Map<String, dynamic>;
-    return PostModel(
-      uid: data['uid'],
-      name: data['name'],
-      username: data['username'],
-      pic: data['pic'],
-      description: data['description'],
-      postID: data['postID'],
-      postImage: data['postImage'],
-      date: data['date'],
-      like: data['like'],
-    );
+
+  Map<String, dynamic> toMap() {
+    return {
+      "id": id,
+      "title": title,
+      "creatorId": creatorId,
+      "": creatorImageId,
+      "imagePathId": imagePathId,
+      "likedBy": likedBy,
+      "totalLikes": totalLikes,
+      "totalComments": totalComments,
+      "timestamp": timestamp,
+    };
   }
-  Map<String, dynamic> toJson() => {
-        'uid': uid,
-        'name': name,
-        'username': username,
-        'pic': pic,
-        'description': description,
-        'postID': postID,
-        'postImage': postImage,
-        'date': date,
-        'like': like,
-      };
+
+  @override
+  String toString() {
+    return "Post - id: $id, title:$title, creatorId: $creatorId";
+  }
 }

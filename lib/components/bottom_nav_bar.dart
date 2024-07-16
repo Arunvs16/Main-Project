@@ -40,8 +40,8 @@ class BottomNavBar extends StatelessWidget {
               onPressed: () {},
             ),
             GButton(
-              icon: Icons.notifications,
-              text: 'Notifications',
+              icon: Icons.add_box_outlined,
+              text: 'Add Post',
               onPressed: () {},
             ),
             GButton(

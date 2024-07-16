@@ -23,104 +23,106 @@ class ProfilePage extends StatelessWidget {
         foregroundColor: Theme.of(context).colorScheme.primary,
         backgroundColor: Colors.transparent,
       ),
-      body: StreamBuilder<DocumentSnapshot>(
-        stream: userDataProvider.documentStream,
-        builder: (context, snapshot) {
-          // get user data
-          if (snapshot.hasData) {
-            final userData = snapshot.data!.data() as Map<String, dynamic>;
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                // User Profile pic
-                Container(
-                  height: 100,
-                  width: 100,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                        width: 5,
-                        color: isDarkMode
-                            ? Theme.of(context).colorScheme.inversePrimary
-                            : Theme.of(context).colorScheme.primary),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(100),
-                    child: Image(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(
-                          "https://miro.medium.com/v2/resize:fit:828/format:webp/1*QO-IfkIhADgSyiXkIUvJRQ.jpeg"),
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      },
-                      errorBuilder: (context, object, stack) {
-                        return Container(
-                          child: Icon(Icons.error_outline),
-                        );
-                      },
+      body: SingleChildScrollView(
+        child: StreamBuilder<DocumentSnapshot>(
+          stream: userDataProvider.documentStream,
+          builder: (context, snapshot) {
+            // get user data
+            if (snapshot.hasData) {
+              final userData = snapshot.data!.data() as Map<String, dynamic>;
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  // User Profile pic
+                  Container(
+                    height: 100,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          width: 5,
+                          color: isDarkMode
+                              ? Theme.of(context).colorScheme.inversePrimary
+                              : Theme.of(context).colorScheme.primary),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-
-                // username
-                Text(
-                  '@' + userData['username'],
-                  style: TextStyle(
-                    fontSize: 25,
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // Edit profile button
-                InkWell(
-                  child: Center(
-                    child: Container(
-                      height: 30,
-                      width: 80,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(7),
-                          color: Theme.of(context).colorScheme.primary),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Edit Profile",
-                            style: TextStyle(
-                                fontSize: 12,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .inversePrimary),
-                          ),
-                        ],
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(100),
+                      child: Image(
+                        fit: BoxFit.cover,
+                        image: NetworkImage(
+                            "https://miro.medium.com/v2/resize:fit:828/format:webp/1*QO-IfkIhADgSyiXkIUvJRQ.jpeg"),
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        },
+                        errorBuilder: (context, object, stack) {
+                          return Container(
+                            child: Icon(Icons.error_outline),
+                          );
+                        },
                       ),
                     ),
                   ),
-                ),
-
-                // bio
-                MyTextBox(
-                  bioHeader: "Bio :",
-                  bio: userData['bio'],
-                  onPressed: () {
-                    userDataProvider.editField(context, "bio");
-                  },
-                  onTap: () {
-                    userDataProvider.editField(context, "bio");
-                  },
-                ),
-              ],
+                  const SizedBox(height: 10),
+        
+                  // username
+                  Text(
+                    '@' + userData['username'],
+                    style: TextStyle(
+                      fontSize: 25,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+        
+                  // Edit profile button
+                  InkWell(
+                    child: Center(
+                      child: Container(
+                        height: 30,
+                        width: 80,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(7),
+                            color: Theme.of(context).colorScheme.primary),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Edit Profile",
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .inversePrimary),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+        
+                  // bio
+                  MyTextBox(
+                    bioHeader: "Bio :",
+                    bio: userData['bio'],
+                    onPressed: () {
+                      userDataProvider.editField(context, "bio");
+                    },
+                    onTap: () {
+                      userDataProvider.editField(context, "bio");
+                    },
+                  ),
+                ],
+              );
+            } else if (snapshot.hasError) {
+              displayMessageToUser("Error+ ${snapshot.error}", context);
+            }
+            return Center(
+              child: CircularProgressIndicator(),
             );
-          } else if (snapshot.hasError) {
-            displayMessageToUser("Error+ ${snapshot.error}", context);
-          }
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        },
+          },
+        ),
       ),
     );
   }
