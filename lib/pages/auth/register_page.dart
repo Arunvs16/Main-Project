@@ -5,6 +5,8 @@ import 'package:main_project/components/google_button.dart';
 import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/components/my_button.dart';
 import 'package:main_project/components/my_text_field.dart';
+import 'package:main_project/model/user_model.dart';
+import 'package:main_project/services/authentication.dart';
 import 'package:main_project/services/google_sign_in.dart';
 
 class RegisterPage extends StatelessWidget {
@@ -15,6 +17,7 @@ class RegisterPage extends StatelessWidget {
   });
 
   // text controllers
+  final nameController = TextEditingController();
   final userNameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -39,19 +42,12 @@ class RegisterPage extends StatelessWidget {
     } else {
       //password match -> create user
       try {
-        UserCredential userCredential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        String response = await AuthMethods().signUp(
+          name: nameController.text,
+          username: userNameController.text,
           email: emailController.text,
           password: passwordController.text,
         );
-        // after creating the user, create a new document in the cloud firestore called users
-        await FirebaseFirestore.instance
-            .collection("Users")
-            .doc(userCredential.user!.email)
-            .set({
-          'username': userNameController.text,
-          'bio': "Add bio",
-        });
 
         // pop loading circle
         if (context.mounted) Navigator.pop(context);

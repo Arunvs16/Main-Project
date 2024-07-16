@@ -27,7 +27,6 @@ class BottomNavBar extends StatelessWidget {
           color: Theme.of(context).colorScheme.primary,
           tabBackgroundColor: Theme.of(context).colorScheme.secondary,
           padding: EdgeInsets.all(16),
-          // provider
           onTabChange: onTabChange,
           tabs: [
             GButton(
@@ -40,8 +39,8 @@ class BottomNavBar extends StatelessWidget {
               onPressed: () {},
             ),
             GButton(
-              icon: Icons.notifications,
-              text: 'Notifications',
+              icon: Icons.add_box_outlined,
+              text: 'Add Post',
               onPressed: () {},
             ),
             GButton(

@@ -43,6 +43,10 @@ dependencies:
   google_nav_bar: ^5.0.6
   provider: ^6.1.2
   iconsax: ^0.0.8
+  uuid: ^4.4.2
+  image_stack:
+  gap: ^3.0.1
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:

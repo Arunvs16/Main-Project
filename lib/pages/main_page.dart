@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/pages_provider.dart';
 import 'package:main_project/components/bottom_nav_bar.dart';
+import 'package:main_project/pages/add_post_page.dart';
 import 'package:main_project/pages/home_page.dart';
-import 'package:main_project/pages/notification_page.dart';
 import 'package:main_project/pages/profile_page.dart';
 import 'package:main_project/pages/search_page.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +17,7 @@ class MainPage extends StatelessWidget {
     List<Widget> pages = [
       HomePage(),
       SearchPage(),
-      NotificationPage(),
+      AddPostPage(),
       ProfilePage(),
     ];
     final pagesProvider = Provider.of<PagesProvider>(context);
