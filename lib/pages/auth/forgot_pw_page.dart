@@ -87,7 +87,7 @@ class ForgotPasswordPage extends StatelessWidget {
               onPressed: () => passwordReset(context), // Pass context here
               color: Theme.of(context).colorScheme.primary,
               child: Text(
-                'Reset Password',
+                'Submit',
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.inversePrimary),
               ),

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
+import 'package:main_project/Providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:main_project/components/comment_card.dart';
 import 'package:main_project/components/my_text_field.dart';
@@ -26,6 +27,8 @@ class CommentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final commentDataProvider = Provider.of<CommentDataProvider>(context);
+    bool isDarkMode =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
 
     return Scaffold(
       appBar: AppBar(
@@ -47,7 +50,8 @@ class CommentPage extends StatelessWidget {
                         "Error: ${snapshot.error}",
                       ),
                     );
-                  } else if (snapshot.connectionState == ConnectionState.waiting) {
+                  } else if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
                     return Center(
                       child: CircularProgressIndicator(
                         color: Theme.of(context).colorScheme.primary,
@@ -99,7 +103,9 @@ class CommentPage extends StatelessWidget {
                       ),
                       child: Icon(
                         Icons.send,
-                        color: Theme.of(context).colorScheme.secondary,
+                        color: isDarkMode
+                            ? Theme.of(context).colorScheme.inversePrimary
+                            : Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                   ),

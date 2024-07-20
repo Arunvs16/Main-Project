@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/auth_page_provider.dart';
+import 'package:main_project/Providers/authentication.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/pages_provider.dart';
 import 'package:main_project/firebase_options.dart';
@@ -24,6 +25,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => Authentication()),
         ChangeNotifierProvider(create: (_) => AuthPageProvider()),
         ChangeNotifierProvider(create: (_) => CommentDataProvider()),
         ChangeNotifierProvider(create: (_) => PostLikeProvider()),

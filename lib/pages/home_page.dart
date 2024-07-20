@@ -19,6 +19,7 @@ class HomePage extends StatelessWidget {
 
   final postController = TextEditingController();
   void postComment(BuildContext context) {
+    // if something in your text field
     if (postController.text.isNotEmpty) {
       Provider.of<PostLikeProvider>(context, listen: false)
           .postLike(postController.text, user.email!);
@@ -62,6 +63,38 @@ class HomePage extends StatelessWidget {
       ),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(25.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: MyTextField(
+                    controller: postController,
+                    hintText: "Type something to post",
+                    obscuretext: false,
+                  ),
+                ),
+                // post icon
+                GestureDetector(
+                  onTap: () => postComment(context),
+                  child: Container(
+                    height: 50,
+                    width: 50,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.send,
+                      color: isDarkMode
+                          ? Theme.of(context).colorScheme.inversePrimary
+                          : Theme.of(context).colorScheme.secondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           Expanded(
             child: StreamBuilder(
               stream: postLikeProvider.orderedDataStream,
@@ -138,36 +171,7 @@ class HomePage extends StatelessWidget {
               },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(25.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: MyTextField(
-                    controller: postController,
-                    hintText: "Type something",
-                    obscuretext: false,
-                  ),
-                ),
-                // post icon
-                GestureDetector(
-                  onTap: () => postComment(context),
-                  child: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.send,
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+
           // logged in as
           Text(
             "Logged in as: ${user.email}",

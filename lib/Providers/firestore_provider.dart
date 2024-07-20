@@ -95,7 +95,11 @@ class UserDataProvider {
 
     // update in firestore only if save button was clicked
     if (saveClicked && newValue.trim().isNotEmpty) {
-      await userCollection.doc(currentUser.email).update({field: newValue});
+      await userCollection.doc(currentUser.email).update(
+        {
+          field: newValue,
+        },
+      );
     }
   }
 }
@@ -141,7 +145,7 @@ class CommentDataProvider with ChangeNotifier {
 
 class PostLikeProvider extends ChangeNotifier {
   final CollectionReference likeCollection =
-      FirebaseFirestore.instance.collection("User likes");
+      FirebaseFirestore.instance.collection("post");
 
   // Stream to get ordered likes from Firestore
   Stream<QuerySnapshot> get orderedDataStream {
