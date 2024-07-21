@@ -21,15 +21,15 @@ class HomePage extends StatelessWidget {
   void postComment(BuildContext context) {
     // if something in your text field
     if (postController.text.isNotEmpty) {
-      Provider.of<PostLikeProvider>(context, listen: false)
-          .postLike(postController.text, user.email!);
+      Provider.of<PostProvider>(context, listen: false)
+          .post(postController.text, user.email!);
     }
     postController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
-    final postLikeProvider = Provider.of<PostLikeProvider>(context);
+    final postProvider = Provider.of<PostProvider>(context);
     bool isDarkMode =
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
     return Scaffold(
@@ -97,7 +97,7 @@ class HomePage extends StatelessWidget {
           ),
           Expanded(
             child: StreamBuilder(
-              stream: postLikeProvider.orderedDataStream,
+              stream: postProvider.orderedDataStream,
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
                   return Center(
@@ -144,7 +144,7 @@ class HomePage extends StatelessWidget {
                           LikeButton(
                             isLiked: isLiked,
                             onTap: () {
-                              postLikeProvider.toggleLike(
+                              postProvider.toggleLike(
                                   post.id, user.email!, !isLiked);
                             },
                           ),

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class Authentication with ChangeNotifier {
-  // firebase authentication
+  // firebase instance
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   // google sign in
@@ -33,14 +33,19 @@ class Authentication with ChangeNotifier {
     notifyListeners();
   }
 
-  //Firebase Sign Out
+  // firebase reset password
+  Future resetPassword(String email) async {
+    return firebaseAuth.sendPasswordResetEmail(email: email);
+  }
+
+  // Firebase Sign Out
   Future signOut() async {
     return firebaseAuth.signOut();
   }
 
   // Google Sign in
   Future signInWithGoogle() async {
-    //begin interactivesign in process
+    // begin interactive sign in process
     final GoogleSignInAccount? googleSignInAccount =
         await GoogleSignIn().signIn();
 
@@ -67,5 +72,4 @@ class Authentication with ChangeNotifier {
   Future signOutWithGoogle() async {
     return googleSignIn.signOut();
   }
-  
 }

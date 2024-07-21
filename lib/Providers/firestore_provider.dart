@@ -143,17 +143,17 @@ class CommentDataProvider with ChangeNotifier {
   }
 }
 
-class PostLikeProvider extends ChangeNotifier {
-  final CollectionReference likeCollection =
+class PostProvider extends ChangeNotifier {
+  final CollectionReference postCollection =
       FirebaseFirestore.instance.collection("post");
 
   // Stream to get ordered likes from Firestore
   Stream<QuerySnapshot> get orderedDataStream {
-    return likeCollection.orderBy('Timestamp', descending: true).snapshots();
+    return postCollection.orderBy('Timestamp', descending: true).snapshots();
   }
 
-  void postLike(String message, String username) {
-    likeCollection.add({
+  void post(String message, String username) {
+    postCollection.add({
       'username': username,
       'message': message,
       'likes': [],
@@ -164,7 +164,7 @@ class PostLikeProvider extends ChangeNotifier {
 
   // Method to like or unlike a comment
   Future<void> toggleLike(String postId, String userEmail, bool isLiked) async {
-    DocumentReference postRef = likeCollection.doc(postId);
+    DocumentReference postRef = postCollection.doc(postId);
 
     if (isLiked) {
       await postRef.update({

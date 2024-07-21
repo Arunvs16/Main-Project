@@ -29,7 +29,7 @@ class BottomNavBar extends StatelessWidget {
           padding: EdgeInsets.all(16),
           // provider
           onTabChange: onTabChange,
-          tabs: [
+          tabs: const [
             GButton(
               icon: Icons.home,
               text: 'Home',
@@ -37,12 +37,10 @@ class BottomNavBar extends StatelessWidget {
             GButton(
               icon: Icons.search,
               text: 'Search',
-              onPressed: () {},
             ),
             GButton(
               icon: Icons.add_box_outlined,
               text: 'Add Post',
-              onPressed: () {},
             ),
             GButton(
               icon: Icons.person,

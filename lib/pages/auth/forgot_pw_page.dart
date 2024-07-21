@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:main_project/services/authentication.dart';
 import 'package:main_project/components/my_text_field.dart';
+import 'package:provider/provider.dart';
 
 class ForgotPasswordPage extends StatelessWidget {
   ForgotPasswordPage({Key? key}) : super(key: key);
@@ -10,9 +12,8 @@ class ForgotPasswordPage extends StatelessWidget {
   // reset password method
   void passwordReset(BuildContext context) async {
     try {
-      await FirebaseAuth.instance.sendPasswordResetEmail(
-        email: emailController.text.trim(),
-      );
+      await Provider.of<Authentication>(context, listen: false)
+          .resetPassword(emailController.text.trim());
       // pop
       if (context.mounted) Navigator.pop(context);
 

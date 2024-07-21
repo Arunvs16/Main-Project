@@ -38,10 +38,8 @@ class MyTextBox extends StatelessWidget {
                 // bio header
                 Text(
                   bioHeader,
-                  style: TextStyle(
-                      color: isDarkMode
-                          ? Theme.of(context).colorScheme.inversePrimary
-                          : Theme.of(context).colorScheme.primary),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.primary),
                 ),
 
                 // edit icon
@@ -49,9 +47,7 @@ class MyTextBox extends StatelessWidget {
                     onPressed: onPressed,
                     icon: Icon(
                       Icons.edit,
-                      color: isDarkMode
-                          ? Theme.of(context).colorScheme.inversePrimary
-                          : Theme.of(context).colorScheme.primary,
+                      color: Theme.of(context).colorScheme.primary,
                     ))
               ],
             ),
