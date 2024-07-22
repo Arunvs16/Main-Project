@@ -54,7 +54,7 @@ class RegisterPage extends StatelessWidget {
         });
 
         // pop loading circle
-        if (context.mounted) Navigator.pop(context);
+        Navigator.pop(context);
       } on FirebaseAuthException catch (error) {
         // pop loading circle
         Navigator.pop(context);

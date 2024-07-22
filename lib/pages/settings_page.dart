@@ -2,10 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:main_project/Providers/authentication.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/components/my_list_tile.dart';
 import 'package:main_project/Providers/theme_provider.dart';
+import 'package:main_project/pages/auth/auth_page.dart';
+import 'package:main_project/pages/auth/login_or_register.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -121,8 +125,16 @@ class SettingsPage extends StatelessWidget {
                 // logout list tile
                 MyListTile(
                   onTap: () {
-                    FirebaseAuth.instance.signOut();
-                    Navigator.pop(context);
+                    Provider.of<Authentication>(context, listen: false)
+                        .signOut()
+                        .whenComplete(() {
+                      Navigator.pushReplacement(
+                        context,
+                        PageTransition(
+                            child: AuthPage(),
+                            type: PageTransitionType.topToBottom),
+                      );
+                    });
                   },
                   horizontal: 70,
                   vertical: 20,
