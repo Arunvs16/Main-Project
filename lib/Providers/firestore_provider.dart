@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:main_project/Providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
-class UserDataProvider {
+class UserDataProvider with ChangeNotifier {
   // user
   final currentUser = FirebaseAuth.instance.currentUser!;
 

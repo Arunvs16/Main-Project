@@ -47,31 +47,30 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBK-lFzDUvp8N_43VFqCLmtXLYyZd-ZCUU',
-    appId: '1:693661094269:android:34cdbfc9cc9b05d4247c14',
-    messagingSenderId: '693661094269',
-    projectId: 'mainproject-f2dc1',
-    storageBucket: 'mainproject-f2dc1.appspot.com',
+    apiKey: 'AIzaSyAmbri1E5kmudT-UOW6oVZXh_oCO8GsqCc',
+    appId: '1:31352400336:android:21478d5fa68272dee0f1d5',
+    messagingSenderId: '31352400336',
+    projectId: 'mainproject-8de69',
+    storageBucket: 'mainproject-8de69.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyD62i0YQJLuE7uHdCqbylaO27iAQSuTNiA',
-    appId: '1:693661094269:ios:a10080c186b73203247c14',
-    messagingSenderId: '693661094269',
-    projectId: 'mainproject-f2dc1',
-    storageBucket: 'mainproject-f2dc1.appspot.com',
-    androidClientId: '693661094269-j1lqq8r9cpk4nnmf2f20o7mel7mn4opg.apps.googleusercontent.com',
-    iosClientId: '693661094269-preccf5n2jured9i5jl0upvj7hbjtflq.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBu-TRNpYEHXTqJd3H8wacwZpLoQr5ALgM',
+    appId: '1:31352400336:ios:009d9150ef31fc9ae0f1d5',
+    messagingSenderId: '31352400336',
+    projectId: 'mainproject-8de69',
+    storageBucket: 'mainproject-8de69.appspot.com',
+    iosClientId: '31352400336-of27vppecmerm9cc715odfg5ksas7u5s.apps.googleusercontent.com',
     iosBundleId: 'com.example.mainProject',
   );
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyD2AhilPWZ7pyqMWI2r8toVdpm9HouBZLg',
-    appId: '1:693661094269:web:2f6eac65dd88e0d0247c14',
-    messagingSenderId: '693661094269',
-    projectId: 'mainproject-f2dc1',
-    authDomain: 'mainproject-f2dc1.firebaseapp.com',
-    storageBucket: 'mainproject-f2dc1.appspot.com',
+    apiKey: 'AIzaSyDjmNMACVyQBtuRZEET-kSxAxI-NVllWm4',
+    appId: '1:31352400336:web:209a44d23a4be3f7e0f1d5',
+    messagingSenderId: '31352400336',
+    projectId: 'mainproject-8de69',
+    authDomain: 'mainproject-8de69.firebaseapp.com',
+    storageBucket: 'mainproject-8de69.appspot.com',
   );
 
 }

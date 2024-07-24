@@ -1,46 +1,49 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Post {
-  final DocumentReference reference;
-  final String? id;
-  final String? title;
-  final String? creatorId;
-  final String? creatorImageId;
-  final String? imagePathId;
-  final List<String>? likedBy;
-  final int? totalLikes;
-  final int? totalComments;
-  final int? timestamp;
+class PostModel {
+  String id;
+  String userName;
+  String userEmail;
+  String userID;
+  String caption;
+  String postID;
+  String imageURL;
+  List<String> like;
 
-  Post({
-    required this.reference,
+  PostModel({
     required this.id,
-    required this.title,
-    required this.creatorId,
-    required this.creatorImageId,
-    required this.imagePathId,
-    required this.likedBy,
-    required this.totalLikes,
-    required this.totalComments,
-    required this.timestamp,
+    required this.userName,
+    required this.userEmail,
+    required this.userID,
+    required this.caption,
+    required this.postID,
+    required this.imageURL,
+    required this.like,
   });
+
+  factory PostModel.fromJson(Map<String, dynamic> data) {
+    return PostModel(
+      id: data['id'],
+      userName: data['userName'],
+      userEmail: data['userEmail'],
+      userID: data['userID'],
+      caption: data['caption'],
+      postID: data['postID'],
+      imageURL: data['imageURL'],
+      like: data['like'],
+    );
+  }
 
   Map<String, dynamic> toMap() {
     return {
       "id": id,
-      "title": title,
-      "creatorId": creatorId,
-      "": creatorImageId,
-      "imagePathId": imagePathId,
-      "likedBy": likedBy,
-      "totalLikes": totalLikes,
-      "totalComments": totalComments,
-      "timestamp": timestamp,
+      "userName": userName,
+      "userEmail": userEmail,
+      "userID": userID,
+      "caption": caption,
+      "postID": postID,
+      "imageURL": imageURL,
+      "like": like,
     };
-  }
-
-  @override
-  String toString() {
-    return "Post - id: $id, title:$title, creatorId: $creatorId";
   }
 }

@@ -66,16 +66,16 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 10),
-        
+
                   // username
                   Text(
-                    '@' + userData['username'],
+                    '@${userData['username']}',
                     style: TextStyle(
                       fontSize: 25,
                     ),
                   ),
                   const SizedBox(height: 20),
-        
+
                   // Edit profile button
                   InkWell(
                     child: Center(
@@ -101,7 +101,7 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                   ),
-        
+
                   // bio
                   MyTextBox(
                     bioHeader: "Bio :",

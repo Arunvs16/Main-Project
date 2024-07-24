@@ -103,7 +103,7 @@ class _AddPostPageState extends State<AddPostPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 MaterialButton(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.surface,
                   onPressed: () {
                     pickImage(false);
                   },
@@ -118,7 +118,7 @@ class _AddPostPageState extends State<AddPostPage> {
                   width: 20,
                 ),
                 MaterialButton(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.surface,
                   onPressed: () {
                     pickImage(true);
                   },

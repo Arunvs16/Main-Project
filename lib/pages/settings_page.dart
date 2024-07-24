@@ -125,16 +125,49 @@ class SettingsPage extends StatelessWidget {
                 // logout list tile
                 MyListTile(
                   onTap: () {
-                    Provider.of<Authentication>(context, listen: false)
-                        .signOut()
-                        .whenComplete(() {
-                      Navigator.pushReplacement(
-                        context,
-                        PageTransition(
-                            child: AuthPage(),
-                            type: PageTransitionType.topToBottom),
-                      );
-                    });
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        content: Text(
+                          'Do you want to logout of your account?',
+                          style: TextStyle(
+                              fontSize: 24,
+                              color: Theme.of(context).colorScheme.primary),
+                        ),
+                        actions: [
+                          MaterialButton(
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary),
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                          MaterialButton(
+                            child: Text(
+                              'Logout',
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.error),
+                            ),
+                            onPressed: () {
+                              Provider.of<Authentication>(context,
+                                      listen: false)
+                                  .signOut()
+                                  .whenComplete(() {
+                                Navigator.pushReplacement(
+                                  context,
+                                  PageTransition(
+                                      child: AuthPage(),
+                                      type: PageTransitionType.topToBottom),
+                                );
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    );
                   },
                   horizontal: 70,
                   vertical: 20,

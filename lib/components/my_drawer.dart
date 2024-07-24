@@ -15,7 +15,8 @@ class MyDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userDataProvider = Provider.of<UserDataProvider>(context);
+    final userDataProvider =
+        Provider.of<UserDataProvider>(context, listen: false);
     return StreamBuilder<DocumentSnapshot>(
       stream: userDataProvider.documentStream,
       builder: (context, snapshot) {

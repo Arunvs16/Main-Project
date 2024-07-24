@@ -31,7 +31,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => PostLikeProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => PagesProvider()),
-        Provider(create: (_) => UserDataProvider()),
+        ChangeNotifierProvider(create: (_) => UserDataProvider()),
       ],
       child: const MyApp(),
     ),
@@ -43,10 +43,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: const AuthPage(),
-      theme: Provider.of<ThemeProvider>(context).themeData,
+      theme: themeProvider.themeData,
       routes: {
         '/mainpage': (context) => MainPage(),
         '/settings': (context) => SettingsPage(),

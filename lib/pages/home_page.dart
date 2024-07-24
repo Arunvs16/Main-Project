@@ -182,30 +182,6 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-
-      //  Column(
-      //   children: [
-      //     // comment icon
-      //     IconButton(
-      //       onPressed: () {
-      //         Navigator.pushNamed(context, '/comments');
-      //       },
-      //       icon: Icon(Icons.comment),
-      //     ),
-
-      //     // comment count
-      //     Text("Comment count"),
-
-      //     // like icon
-      //     LikeButton(
-      //       isLiked: isLiked,
-      //       onTap: onTap,
-      //     ),
-
-      //     // like count
-      //     Text("Comment count"),
-      //   ],
-      // ),
     );
   }
 }
