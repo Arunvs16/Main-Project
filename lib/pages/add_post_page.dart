@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:main_project/utils/cropped_image.dart';
-import 'package:main_project/utils/utils.dart';
 
 class AddPostPage extends StatefulWidget {
   const AddPostPage({super.key});
@@ -53,10 +52,13 @@ class _AddPostPageState extends State<AddPostPage> {
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: 'Crop Image',
-          toolbarColor: Theme.of(context).colorScheme.inversePrimary,
-          toolbarWidgetColor: Theme.of(context).colorScheme.primary,
+          toolbarColor: Theme.of(context).colorScheme.background,
+          cropStyle: CropStyle.rectangle,
+          activeControlsWidgetColor: Theme.of(context).colorScheme.surface,
+          toolbarWidgetColor: Theme.of(context).colorScheme.surface,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,
+          backgroundColor: Theme.of(context).colorScheme.background,
           aspectRatioPresets: [
             CropAspectRatioPreset.ratio3x2,
             CropAspectRatioPreset.ratio4x3,
@@ -103,7 +105,7 @@ class _AddPostPageState extends State<AddPostPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 MaterialButton(
-                  color: Theme.of(context).colorScheme.surface,
+                  color: Theme.of(context).colorScheme.primary,
                   onPressed: () {
                     pickImage(false);
                   },
@@ -118,7 +120,7 @@ class _AddPostPageState extends State<AddPostPage> {
                   width: 20,
                 ),
                 MaterialButton(
-                  color: Theme.of(context).colorScheme.surface,
+                  color: Theme.of(context).colorScheme.primary,
                   onPressed: () {
                     pickImage(true);
                   },

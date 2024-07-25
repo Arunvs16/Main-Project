@@ -8,7 +8,6 @@ import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/components/my_list_tile.dart';
 import 'package:main_project/Providers/theme_provider.dart';
 import 'package:main_project/pages/auth/auth_page.dart';
-import 'package:main_project/pages/auth/login_or_register.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
@@ -21,8 +20,8 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userDataProvider = Provider.of<UserDataProvider>(context);
-    // bool isDarkMode =
-    //     Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
+    bool isDarkMode =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Theme.of(context).colorScheme.primary,
@@ -59,10 +58,14 @@ class SettingsPage extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              "@" + userData['username'],
+                              "@${userData['username']}",
                               style: TextStyle(
                                   fontSize: 20,
-                                  color: Theme.of(context).colorScheme.primary),
+                                  color: isDarkMode
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .inversePrimary
+                                      : Theme.of(context).colorScheme.primary),
                             ),
                           ],
                         ),

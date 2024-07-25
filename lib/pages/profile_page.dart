@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -18,110 +20,180 @@ class ProfilePage extends StatelessWidget {
     final userDataProvider = Provider.of<UserDataProvider>(context);
     bool isDarkMode =
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
+
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Theme.of(context).colorScheme.primary,
         backgroundColor: Colors.transparent,
       ),
       body: SingleChildScrollView(
-        child: StreamBuilder<DocumentSnapshot>(
-          stream: userDataProvider.documentStream,
-          builder: (context, snapshot) {
-            // get user data
-            if (snapshot.hasData) {
-              final userData = snapshot.data!.data() as Map<String, dynamic>;
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  // User Profile pic
-                  Container(
-                    height: 100,
-                    width: 100,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                          width: 5,
-                          color: isDarkMode
-                              ? Theme.of(context).colorScheme.inversePrimary
-                              : Theme.of(context).colorScheme.primary),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(100),
-                      child: Image(
-                        fit: BoxFit.cover,
-                        image: NetworkImage(
-                            "https://miro.medium.com/v2/resize:fit:828/format:webp/1*QO-IfkIhADgSyiXkIUvJRQ.jpeg"),
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        },
-                        errorBuilder: (context, object, stack) {
-                          return Container(
-                            child: Icon(Icons.error_outline),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  // username
-                  Text(
-                    '@${userData['username']}',
-                    style: TextStyle(
-                      fontSize: 25,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Edit profile button
-                  InkWell(
-                    child: Center(
-                      child: Container(
-                        height: 30,
-                        width: 80,
+        child: Column(
+          children: [
+            StreamBuilder<DocumentSnapshot>(
+              stream: userDataProvider.documentStream,
+              builder: (context, snapshot) {
+                // get user data
+                if (snapshot.hasData) {
+                  final userData =
+                      snapshot.data!.data() as Map<String, dynamic>;
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      // User Profile pic
+                      Container(
+                        height: 100,
+                        width: 100,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(7),
-                            color: Theme.of(context).colorScheme.primary),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Edit Profile",
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .inversePrimary),
-                            ),
-                          ],
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                              width: 5,
+                              color: isDarkMode
+                                  ? Theme.of(context).colorScheme.inversePrimary
+                                  : Theme.of(context).colorScheme.primary),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: Image(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(
+                                "https://miro.medium.com/v2/resize:fit:828/format:webp/1*QO-IfkIhADgSyiXkIUvJRQ.jpeg"),
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
+                            errorBuilder: (context, object, stack) {
+                              return Container(
+                                child: Icon(Icons.error_outline),
+                              );
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                  ),
+                      const SizedBox(height: 10),
 
-                  // bio
-                  MyTextBox(
-                    bioHeader: "Bio :",
-                    bio: userData['bio'],
-                    onPressed: () {
-                      userDataProvider.editField(context, "bio");
-                    },
-                    onTap: () {
-                      userDataProvider.editField(context, "bio");
-                    },
+                      // username
+                      Text(
+                        '@${userData['username']}',
+                        style: TextStyle(
+                          fontSize: 25,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Edit profile button
+                      InkWell(
+                        onTap: () {
+                          userDataProvider.editField(context, "bio");
+                        },
+                        child: Center(
+                          child: Container(
+                            height: 30,
+                            width: 80,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(7),
+                                color: Theme.of(context).colorScheme.primary),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Edit Profile",
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .inversePrimary),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // bio
+                      MyTextBox(
+                        onTap: () {
+                          userDataProvider.editField(context, "bio");
+                        },
+                        bioHeader: "Bio :",
+                        bio: userData['bio'],
+                        onPressed: () {
+                          userDataProvider.editField(context, "bio");
+                        },
+                      ),
+                    ],
+                  );
+                } else if (snapshot.hasError) {
+                  displayMessageToUser("Error+ ${snapshot.error}", context);
+                }
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            ),
+            // my post header
+            Container(
+              padding: EdgeInsets.all(25),
+              child: Text(
+                'Uploads',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+            // my posts
+            StreamBuilder<QuerySnapshot>(
+              stream:
+                  FirebaseFirestore.instance.collection("Posts").snapshots(),
+              builder: (context, snapshot) {
+                // show errors
+                if (snapshot.hasError) {
+                  return Center(child: Text(snapshot.error.toString()));
+                }
+                // show loading circle
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                // get all posts
+                final posts = snapshot.data!.docs;
+                // no data
+                if (snapshot.data == null || posts.isEmpty) {
+                  return Center(
+                    child: Text('No posts'),
+                  );
+                }
+                // return as a Grid view
+                return GridView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    mainAxisSpacing: 5,
+                    crossAxisSpacing: 5,
+                    crossAxisCount: 3,
                   ),
-                ],
-              );
-            } else if (snapshot.hasError) {
-              displayMessageToUser("Error+ ${snapshot.error}", context);
-            }
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          },
+                  itemCount: posts.length,
+                  itemBuilder: (context, index) {
+                    // get each individual post
+                    final post = posts[index];
+                    // get data from each post
+                    String imageUrl = post['imageUrl'];
+
+                    // return as a container
+                    return Container(
+                      child: Image.network(
+                        imageUrl,
+                        fit: BoxFit.fill,
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ],
         ),
       ),
     );

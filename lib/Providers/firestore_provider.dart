@@ -64,7 +64,8 @@ class UserDataProvider with ChangeNotifier {
         ),
         actions: [
           // cancel button
-          TextButton(
+          MaterialButton(
+            color: Theme.of(context).colorScheme.secondary,
             onPressed: () => Navigator.pop(context),
             child: Text(
               "Cancel",
@@ -76,7 +77,8 @@ class UserDataProvider with ChangeNotifier {
           ),
 
           // save button
-          TextButton(
+          MaterialButton(
+            color: Theme.of(context).colorScheme.primary,
             onPressed: () {
               saveClicked = true; // Set the flag when save button is clicked
               Navigator.of(context).pop();
@@ -84,9 +86,7 @@ class UserDataProvider with ChangeNotifier {
             child: Text(
               "Save",
               style: TextStyle(
-                  color: isDarkMode
-                      ? Theme.of(context).colorScheme.inversePrimary
-                      : Theme.of(context).colorScheme.primary),
+                  color: Theme.of(context).colorScheme.inversePrimary),
             ),
           ),
         ],

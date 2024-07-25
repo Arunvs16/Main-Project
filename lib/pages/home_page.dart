@@ -1,23 +1,24 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/theme_provider.dart';
-import 'package:main_project/components/like_button.dart';
 import 'package:main_project/components/my_drawer.dart';
-import 'package:main_project/components/my_text_field.dart';
 import 'package:main_project/pages/chat_page.dart';
 import 'package:provider/provider.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
 
-  //user
+  // user
   final user = FirebaseAuth.instance.currentUser!;
 
   // controller
-
   final postController = TextEditingController();
+
   void postComment(BuildContext context) {
     // if something in your text field
     if (postController.text.isNotEmpty) {
@@ -63,115 +64,60 @@ class HomePage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(25.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: MyTextField(
-                    controller: postController,
-                    hintText: "Type something to post",
-                    obscuretext: false,
-                  ),
-                ),
-                // post icon
-                GestureDetector(
-                  onTap: () => postComment(context),
-                  child: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.send,
-                      color: isDarkMode
-                          ? Theme.of(context).colorScheme.inversePrimary
-                          : Theme.of(context).colorScheme.secondary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
           Expanded(
-            child: StreamBuilder(
-              stream: postLikeProvider.orderedDataStream,
-              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            child: StreamBuilder<QuerySnapshot>(
+              stream:
+                  FirebaseFirestore.instance.collection("Posts").snapshots(),
+              builder: (context, snapshot) {
+                // show errors
                 if (snapshot.hasError) {
+                  return Center(child: Text(snapshot.error.toString()));
+                }
+                // show loading circle
+                if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
-                    child: Text(
-                      "Error: ${snapshot.error}",
-                    ),
-                  );
-                } else if (snapshot.connectionState ==
-                    ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  );
-                } else if (snapshot.hasData) {
-                  final List<DocumentSnapshot> docs = snapshot.data!.docs;
-                  return ListView.builder(
-                    itemCount: docs.length,
-                    itemBuilder: (context, index) {
-                      final DocumentSnapshot post = docs[index];
-                      final List<String> likes =
-                          List<String>.from(post['likes'] ?? []);
-                      final bool isLiked = likes.contains(user.email);
-                      return Column(
-                        children: [
-                          // user name
-                          Text(post['username']),
-
-                          // message
-                          Text(post['message']),
-
-                          // comment icon
-                          IconButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/comments');
-                            },
-                            icon: Icon(Icons.comment),
-                          ),
-
-                          // comment count
-                          Text("Comment count"),
-
-                          // like icon
-                          LikeButton(
-                            isLiked: isLiked,
-                            onTap: () {
-                              postLikeProvider.toggleLike(
-                                  post.id, user.email!, !isLiked);
-                            },
-                          ),
-
-                          // Likes count
-                          Text(
-                            likes.length.toString(),
-                            style: TextStyle(
-                                color: isDarkMode
-                                    ? Theme.of(context)
-                                        .colorScheme
-                                        .inversePrimary
-                                    : Theme.of(context).colorScheme.primary),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                } else {
-                  return Center(
-                    child: Text("No data found"),
+                    child: CircularProgressIndicator(),
                   );
                 }
+                // get all posts
+                final posts = snapshot.data!.docs;
+                // no data
+                if (snapshot.data == null || posts.isEmpty) {
+                  return Center(
+                    child: Text('No posts'),
+                  );
+                }
+                // return as a list
+                return ListView.builder(
+                  itemCount: posts.length,
+                  itemBuilder: (context, index) {
+                    // get each individual post
+                    final post = posts[index];
+                    // get data from each post
+                    String caption = post['caption'];
+                    String imageUrl = post['imageUrl'];
+                    Timestamp timestamp = post['timestamp'];
+                    DateTime dateTime = timestamp.toDate();
+                    String timeAgo = timeago.format(dateTime);
+
+                    // return as a container
+                    return Container(
+                      child: Column(
+                        children: [
+                          // time
+                          Text(timeAgo),
+                          // caption
+                          Text(caption),
+                          // image
+                          Image.network(imageUrl),
+                        ],
+                      ),
+                    );
+                  },
+                );
               },
             ),
           ),
-
           // logged in as
           Text(
             "Logged in as: ${user.email}",
