@@ -29,13 +29,14 @@ class RegisterPage extends StatelessWidget {
         child: CircularProgressIndicator(),
       ),
     );
+
     //password don't match -> tell user to fix
     if (passwordController.text != confirmPasswordController.text) {
       // pop loading circle
       Navigator.pop(context);
 
       // show error message to user
-      displayMessageToUser("Password don't match", context);
+      displayMessageToUser("Passwords don't match", context);
     } else {
       //password match -> create user
       try {
@@ -44,12 +45,15 @@ class RegisterPage extends StatelessWidget {
           email: emailController.text,
           password: passwordController.text,
         );
+
+        // Get user UID
+        String uid = userCredential.user!.uid;
+
         // after creating the user, create a new document in the cloud firestore called users
-        await FirebaseFirestore.instance
-            .collection("Users")
-            .doc(userCredential.user!.email)
-            .set({
+        await FirebaseFirestore.instance.collection("Users").doc(uid).set({
           'username': userNameController.text,
+          'email': emailController.text,
+          'profilePicUrl': '',
           'bio': "Add bio",
         });
 
@@ -60,7 +64,8 @@ class RegisterPage extends StatelessWidget {
         Navigator.pop(context);
 
         // display error message
-        displayMessageToUser(error.code, context);
+        displayMessageToUser(
+            error.message ?? "An unknown error occurred", context);
       }
     }
   }
@@ -81,30 +86,22 @@ class RegisterPage extends StatelessWidget {
                 size: 60,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              // Image.asset(''),
-              const SizedBox(height: 10),
-              // app name
-              const Text(
-                'Myapp',
-                style: TextStyle(fontSize: 20),
-              ),
               const SizedBox(height: 10),
               // Welcome text
               Text(
-                "Let's make a account for you!",
+                "Let's create an account for you!",
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-
               const SizedBox(height: 30),
               // user name text field
               MyTextField(
                 controller: userNameController,
                 hintText: 'Username',
-                obscuretext: false,
+                obscureText: false,
               ),
               const SizedBox(height: 20),
 
@@ -112,7 +109,7 @@ class RegisterPage extends StatelessWidget {
               MyTextField(
                 controller: emailController,
                 hintText: 'Email',
-                obscuretext: false,
+                obscureText: false,
               ),
               const SizedBox(height: 20),
 
@@ -120,15 +117,14 @@ class RegisterPage extends StatelessWidget {
               MyTextField(
                 controller: passwordController,
                 hintText: 'Password',
-                obscuretext: true,
+                obscureText: true,
               ),
-
               const SizedBox(height: 20),
               // confirm password Text field
               MyTextField(
                 controller: confirmPasswordController,
                 hintText: 'Confirm Password',
-                obscuretext: true,
+                obscureText: true,
               ),
               const SizedBox(height: 30),
 
@@ -137,7 +133,6 @@ class RegisterPage extends StatelessWidget {
                 text: "Sign Up",
                 onTap: () => signUp(context),
               ),
-
               const SizedBox(height: 20),
               // or continue with
               Text(
@@ -146,7 +141,6 @@ class RegisterPage extends StatelessWidget {
                   color: Theme.of(context).colorScheme.primary,
                 ),
               ),
-
               const SizedBox(height: 20),
               // google Sign In
               GButton(
@@ -159,9 +153,7 @@ class RegisterPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text('Already a Member?'),
-
                   const SizedBox(width: 10),
-
                   // Register now
                   GestureDetector(
                     onTap: onTap,

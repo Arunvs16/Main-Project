@@ -17,6 +17,8 @@ class CroppedImage extends StatelessWidget {
 
   final TextEditingController captionController = TextEditingController();
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   Future<void> uploadImageAndCaption(BuildContext context) async {
     try {
       isLoading.value = true;
@@ -58,7 +60,10 @@ class CroppedImage extends StatelessWidget {
       String downloadUrl = await taskSnapshot.ref.getDownloadURL();
 
       // Save the image URL and caption to Firestore
-      await FirebaseFirestore.instance.collection('Posts').add({
+      await FirebaseFirestore.instance
+          .collection('Posts')
+          .doc(_auth.currentUser!.uid)
+          .set({
         'imageUrl': downloadUrl,
         'caption': captionController.text,
         'timestamp': Timestamp.now(),

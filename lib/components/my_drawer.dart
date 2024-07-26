@@ -45,9 +45,8 @@ class MyDrawer extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                      "https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png",
-                                    ),
+                                    backgroundImage:
+                                        AssetImage('images/person.jpg'),
                                     backgroundColor: Colors.transparent,
                                     radius: 40,
                                   ),

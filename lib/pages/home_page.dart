@@ -1,12 +1,12 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/theme_provider.dart';
 import 'package:main_project/components/my_drawer.dart';
+import 'package:main_project/components/post_card.dart';
 import 'package:main_project/pages/chat_page.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -48,8 +48,10 @@ class HomePage extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => ChatPage(),
+                PageTransition(
+                  duration: Durations.medium3,
+                  child: ChatPage(),
+                  type: PageTransitionType.rightToLeft,
                 ),
               );
             },
@@ -66,17 +68,27 @@ class HomePage extends StatelessWidget {
         children: [
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream:
-                  FirebaseFirestore.instance.collection("Posts").snapshots(),
+              stream: FirebaseFirestore.instance
+                  .collection("Posts")
+                  .orderBy('timestamp', descending: true)
+                  // .doc(user.email)
+                  // .collection("Users")
+                  .snapshots(),
               builder: (context, snapshot) {
                 // show errors
                 if (snapshot.hasError) {
-                  return Center(child: Text(snapshot.error.toString()));
+                  return Center(
+                    child: Text(
+                      snapshot.error.toString(),
+                    ),
+                  );
                 }
                 // show loading circle
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   );
                 }
                 // get all posts
@@ -101,17 +113,10 @@ class HomePage extends StatelessWidget {
                     String timeAgo = timeago.format(dateTime);
 
                     // return as a container
-                    return Container(
-                      child: Column(
-                        children: [
-                          // time
-                          Text(timeAgo),
-                          // caption
-                          Text(caption),
-                          // image
-                          Image.network(imageUrl),
-                        ],
-                      ),
+                    return PostCard(
+                      caption: caption,
+                      timeAgo: timeAgo,
+                      imageUrl: imageUrl,
                     );
                   },
                 );

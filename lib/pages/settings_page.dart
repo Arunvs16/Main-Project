@@ -53,10 +53,25 @@ class SettingsPage extends StatelessWidget {
                             CircleAvatar(
                               backgroundColor: Colors.transparent,
                               radius: 50,
-                              child: Image.network(
-                                "https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png",
+                              child: Image(
+                                image: AssetImage(
+                                  "images/person.jpg",
+                                ),
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    child: Icon(Icons.error_outline),
+                                  );
+                                },
                               ),
                             ),
+                            SizedBox(width: 10),
                             Text(
                               "@${userData['username']}",
                               style: TextStyle(
@@ -158,14 +173,17 @@ class SettingsPage extends StatelessWidget {
                               Provider.of<Authentication>(context,
                                       listen: false)
                                   .signOut()
-                                  .whenComplete(() {
-                                Navigator.pushReplacement(
-                                  context,
-                                  PageTransition(
+                                  .whenComplete(
+                                () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    PageTransition(
                                       child: AuthPage(),
-                                      type: PageTransitionType.topToBottom),
-                                );
-                              });
+                                      type: PageTransitionType.topToBottom,
+                                    ),
+                                  );
+                                },
+                              );
                             },
                           ),
                         ],

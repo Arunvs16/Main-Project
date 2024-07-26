@@ -78,7 +78,7 @@ class ForgotPasswordPage extends StatelessWidget {
             MyTextField(
               controller: emailController,
               hintText: 'Email',
-              obscuretext: false,
+              obscureText: false,
             ),
             SizedBox(height: 10),
 

@@ -60,12 +60,12 @@ class LoginPage extends StatelessWidget {
                 color: Theme.of(context).colorScheme.primary,
               ),
               // Image.asset(''),
-              const SizedBox(height: 10),
-              // app name
-              const Text(
-                'Myapp',
-                style: TextStyle(fontSize: 20),
-              ),
+              // const SizedBox(height: 10),
+              // // app name
+              // const Text(
+              //   'Myapp',
+              //   style: TextStyle(fontSize: 20),
+              // ),
               const SizedBox(height: 10),
               // Welcome text
               Text(
@@ -83,7 +83,7 @@ class LoginPage extends StatelessWidget {
               MyTextField(
                 controller: emailController,
                 hintText: 'Email',
-                obscuretext: false,
+                obscureText: false,
               ),
               const SizedBox(height: 10),
 
@@ -91,7 +91,7 @@ class LoginPage extends StatelessWidget {
               MyTextField(
                 controller: passwordController,
                 hintText: 'Password',
-                obscuretext: true,
+                obscureText: true,
               ),
               const SizedBox(height: 20),
 

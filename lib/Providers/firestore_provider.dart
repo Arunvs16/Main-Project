@@ -16,7 +16,7 @@ class UserDataProvider with ChangeNotifier {
 
   // stream of data from firestore document
   Stream<DocumentSnapshot> get documentStream {
-    return _firestore.collection("Users").doc(currentUser.email).snapshots();
+    return _firestore.collection("Users").doc(currentUser.uid).snapshots();
   }
 
   void editField(BuildContext context, String field) async {
@@ -82,6 +82,7 @@ class UserDataProvider with ChangeNotifier {
             onPressed: () {
               saveClicked = true; // Set the flag when save button is clicked
               Navigator.of(context).pop();
+              print('Bio updated => ${newValue}');
             },
             child: Text(
               "Save",
@@ -95,7 +96,7 @@ class UserDataProvider with ChangeNotifier {
 
     // update in firestore only if save button was clicked
     if (saveClicked && newValue.trim().isNotEmpty) {
-      await userCollection.doc(currentUser.email).update(
+      await userCollection.doc(currentUser.uid).update(
         {
           field: newValue,
         },

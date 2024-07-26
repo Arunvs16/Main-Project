@@ -22,7 +22,7 @@ class SearchPage extends StatelessWidget {
           MyTextField(
             controller: controller,
             hintText: "Search",
-            obscuretext: false,
+            obscureText: false,
           ),
         ],
       ),

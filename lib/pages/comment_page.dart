@@ -88,7 +88,7 @@ class CommentPage extends StatelessWidget {
                     child: MyTextField(
                       controller: textController,
                       hintText: "Type something",
-                      obscuretext: false,
+                      obscureText: false,
                     ),
                   ),
                   // post icon

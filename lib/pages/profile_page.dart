@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -55,8 +53,7 @@ class ProfilePage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(100),
                           child: Image(
                             fit: BoxFit.cover,
-                            image: NetworkImage(
-                                "https://miro.medium.com/v2/resize:fit:828/format:webp/1*QO-IfkIhADgSyiXkIUvJRQ.jpeg"),
+                            image: AssetImage('images/person.jpg'),
                             loadingBuilder: (context, child, loadingProgress) {
                               if (loadingProgress == null) return child;
                               return Center(
@@ -155,7 +152,9 @@ class ProfilePage extends StatelessWidget {
                 // show loading circle
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   );
                 }
                 // get all posts
@@ -184,7 +183,24 @@ class ProfilePage extends StatelessWidget {
 
                     // return as a container
                     return Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
                       child: Image.network(
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            child: Icon(Icons.error_outline),
+                          );
+                        },
                         imageUrl,
                         fit: BoxFit.fill,
                       ),
