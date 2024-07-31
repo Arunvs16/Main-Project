@@ -19,7 +19,7 @@ class Authentication with ChangeNotifier {
         .signInWithEmailAndPassword(email: email, password: password);
     User? user = userCredential.user!;
     userUID = user.uid;
-    print(userUID);
+    print('user unique => $userUID');
     notifyListeners();
   }
 
@@ -67,5 +67,4 @@ class Authentication with ChangeNotifier {
   Future signOutWithGoogle() async {
     return googleSignIn.signOut();
   }
-  
 }

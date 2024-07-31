@@ -18,11 +18,14 @@ class MyDrawer extends StatelessWidget {
     final userDataProvider =
         Provider.of<UserDataProvider>(context, listen: false);
     return StreamBuilder<DocumentSnapshot>(
-      stream: userDataProvider.documentStream,
+      stream: FirebaseFirestore.instance
+          .collection("Users")
+          .doc(currentUser.uid)
+          .snapshots(),
       builder: (context, snapshot) {
         // get user data
         if (snapshot.hasData) {
-          final userData = snapshot.data!.data() as Map<String, dynamic>;
+          var userData = snapshot.data!.data() as Map<String, dynamic>;
           return Drawer(
             backgroundColor: Theme.of(context).colorScheme.background,
             child: Column(
@@ -50,11 +53,16 @@ class MyDrawer extends StatelessWidget {
                                     backgroundColor: Colors.transparent,
                                     radius: 40,
                                   ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+
+                                  // user name
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        "@" + userData['username'],
+                                        "@${userData['username']}",
                                         style: TextStyle(
                                             fontSize: 20,
                                             color: Theme.of(context)

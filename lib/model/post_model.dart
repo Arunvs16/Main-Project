@@ -1,7 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class PostModel {
-  String id;
   String userName;
   String userEmail;
   String userID;
@@ -11,7 +8,6 @@ class PostModel {
   List<String> like;
 
   PostModel({
-    required this.id,
     required this.userName,
     required this.userEmail,
     required this.userID,
@@ -23,7 +19,6 @@ class PostModel {
 
   factory PostModel.fromJson(Map<String, dynamic> data) {
     return PostModel(
-      id: data['id'],
       userName: data['userName'],
       userEmail: data['userEmail'],
       userID: data['userID'],
@@ -36,7 +31,6 @@ class PostModel {
 
   Map<String, dynamic> toMap() {
     return {
-      "id": id,
       "userName": userName,
       "userEmail": userEmail,
       "userID": userID,

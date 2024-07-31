@@ -63,12 +63,14 @@ class CroppedImage extends StatelessWidget {
       await FirebaseFirestore.instance
           .collection('Posts')
           .doc(_auth.currentUser!.uid)
-          .set({
-        'imageUrl': downloadUrl,
-        'caption': captionController.text,
-        'timestamp': Timestamp.now(),
-        'userId': user.uid,
-      });
+          .set(
+        {
+          'imageUrl': downloadUrl,
+          'caption': captionController.text,
+          'timestamp': Timestamp.now(),
+          'userId': user.uid,
+        },
+      );
 
       // Show a success message
       ScaffoldMessenger.of(context).showSnackBar(

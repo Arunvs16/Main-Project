@@ -6,18 +6,13 @@ import 'package:provider/provider.dart';
 
 class UserDataProvider with ChangeNotifier {
   // user
-  final currentUser = FirebaseAuth.instance.currentUser!;
+  final User currentUser = FirebaseAuth.instance.currentUser!;
 
   // firestore instance
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   // all users
   final userCollection = FirebaseFirestore.instance.collection("Users");
-
-  // stream of data from firestore document
-  Stream<DocumentSnapshot> get documentStream {
-    return _firestore.collection("Users").doc(currentUser.uid).snapshots();
-  }
 
   void editField(BuildContext context, String field) async {
     String newValue = "";
@@ -82,7 +77,7 @@ class UserDataProvider with ChangeNotifier {
             onPressed: () {
               saveClicked = true; // Set the flag when save button is clicked
               Navigator.of(context).pop();
-              print('Bio updated => ${newValue}');
+              print('Bio updated => $newValue');
             },
             child: Text(
               "Save",

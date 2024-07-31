@@ -52,6 +52,7 @@ class RegisterPage extends StatelessWidget {
         // after creating the user, create a new document in the cloud firestore called users
         await FirebaseFirestore.instance.collection("Users").doc(uid).set({
           'username': userNameController.text,
+          'uid': uid,
           'email': emailController.text,
           'profilePicUrl': '',
           'bio': "Add bio",

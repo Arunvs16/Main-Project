@@ -5,6 +5,8 @@ import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/theme_provider.dart';
 import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/components/my_text_box.dart';
+import 'package:main_project/pages/open_post_page.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -28,7 +30,11 @@ class ProfilePage extends StatelessWidget {
         child: Column(
           children: [
             StreamBuilder<DocumentSnapshot>(
-              stream: userDataProvider.documentStream,
+              stream: FirebaseFirestore.instance
+                  .collection("Users")
+                  .doc(currentUser.uid)
+                  .snapshots(),
+              // userDataProvider.documentStream,
               builder: (context, snapshot) {
                 // get user data
                 if (snapshot.hasData) {
@@ -80,11 +86,9 @@ class ProfilePage extends StatelessWidget {
                       const SizedBox(height: 20),
 
                       // Edit profile button
-                      InkWell(
-                        onTap: () {
-                          userDataProvider.editField(context, "bio");
-                        },
-                        child: Center(
+                      Center(
+                        child: InkWell(
+                          onTap: () {},
                           child: Container(
                             height: 30,
                             width: 80,
@@ -161,9 +165,7 @@ class ProfilePage extends StatelessWidget {
                 final posts = snapshot.data!.docs;
                 // no data
                 if (snapshot.data == null || posts.isEmpty) {
-                  return Center(
-                    child: Text('No posts'),
-                  );
+                  return Container();
                 }
                 // return as a Grid view
                 return GridView.builder(
@@ -182,27 +184,38 @@ class ProfilePage extends StatelessWidget {
                     String imageUrl = post['imageUrl'];
 
                     // return as a container
-                    return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                      child: Image.network(
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                            child: CircularProgressIndicator(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          );
-                        },
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            child: Icon(Icons.error_outline),
-                          );
-                        },
-                        imageUrl,
-                        fit: BoxFit.fill,
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          PageTransition(
+                            child: OpenPostPage(),
+                            type: PageTransitionType.fade,
+                          ),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        child: Image.network(
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              child: Icon(Icons.error_outline),
+                            );
+                          },
+                          imageUrl,
+                          fit: BoxFit.fitWidth,
+                        ),
                       ),
                     );
                   },

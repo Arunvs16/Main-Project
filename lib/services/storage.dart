@@ -22,7 +22,6 @@ class StorageProvider with ChangeNotifier {
     final imageUrl = await storageRef.getDownloadURL();
 
     final newPost = PostModel(
-      id: post.id,
       userName: post.userName,
       userEmail: post.userEmail,
       userID: post.userID,

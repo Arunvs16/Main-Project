@@ -5,7 +5,7 @@ import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/theme_provider.dart';
 import 'package:main_project/components/my_drawer.dart';
 import 'package:main_project/components/post_card.dart';
-import 'package:main_project/pages/chat_page.dart';
+import 'package:main_project/pages/chat_list_page.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -50,7 +50,7 @@ class HomePage extends StatelessWidget {
                 context,
                 PageTransition(
                   duration: Durations.medium3,
-                  child: ChatPage(),
+                  child: ChatListPage(),
                   type: PageTransitionType.rightToLeft,
                 ),
               );
@@ -71,8 +71,6 @@ class HomePage extends StatelessWidget {
               stream: FirebaseFirestore.instance
                   .collection("Posts")
                   .orderBy('timestamp', descending: true)
-                  // .doc(user.email)
-                  // .collection("Users")
                   .snapshots(),
               builder: (context, snapshot) {
                 // show errors
@@ -117,6 +115,54 @@ class HomePage extends StatelessWidget {
                       caption: caption,
                       timeAgo: timeAgo,
                       imageUrl: imageUrl,
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            content: Text(
+                              'Do you want to delete this post?',
+                              style: TextStyle(
+                                  fontSize: 24,
+                                  color: Theme.of(context).colorScheme.primary),
+                            ),
+                            actions: [
+                              MaterialButton(
+                                child: Text(
+                                  'Cancel',
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary),
+                                ),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              MaterialButton(
+                                child: Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                      color:
+                                          Theme.of(context).colorScheme.error),
+                                ),
+                                onPressed: () {
+                                  FirebaseFirestore.instance
+                                      .collection("Posts")
+                                      .doc(user.uid
+                                          // add post id
+                                          )
+                                      .delete()
+                                      .whenComplete(
+                                    () {
+                                      Navigator.pop(context);
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     );
                   },
                 );

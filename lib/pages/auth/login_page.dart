@@ -1,12 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/authentication.dart';
+import 'package:main_project/admin/login_page.dart';
 import 'package:main_project/components/google_button.dart';
 import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/components/my_button.dart';
 import 'package:main_project/components/my_text_field.dart';
 import 'package:main_project/pages/auth/forgot_pw_page.dart';
 import 'package:main_project/services/google_sign_in.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
@@ -34,7 +36,7 @@ class LoginPage extends StatelessWidget {
           .logIntoAccount(emailController.text, passwordController.text);
 
       // pop loading circle
-      if (context.mounted) Navigator.pop(context);
+      Navigator.pop(context);
     } on FirebaseAuthException catch (error) {
       // pop loading circle
       Navigator.pop(context);
@@ -105,9 +107,10 @@ class LoginPage extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            // ignore: prefer_const_constructors
-                            builder: (context) => ForgotPasswordPage(),
+                          PageTransition(
+                            child: ForgotPasswordPage(),
+                            type: PageTransitionType.leftToRight,
+                            duration: Durations.long1,
                           ),
                         );
                       },
@@ -172,7 +175,32 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                 ],
-              )
+              ),
+              const SizedBox(height: 30),
+              Divider(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              const SizedBox(height: 30),
+
+              // Login as Admin
+              MaterialButton(
+                color: Theme.of(context).colorScheme.primary,
+                child: Text(
+                  'Login as Admin',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    PageTransition(
+                      child: AdminLoginPage(onTap: onTap),
+                      type: PageTransitionType.rightToLeft,
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),

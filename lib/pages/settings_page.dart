@@ -30,7 +30,10 @@ class SettingsPage extends StatelessWidget {
       ),
       backgroundColor: Theme.of(context).colorScheme.background,
       body: StreamBuilder<DocumentSnapshot>(
-        stream: userDataProvider.documentStream,
+        stream: FirebaseFirestore.instance
+            .collection("Users")
+            .doc(currentUser.uid)
+            .snapshots(),
         builder: (context, snapshot) {
           // get user data
           if (snapshot.hasData) {
@@ -41,49 +44,44 @@ class SettingsPage extends StatelessWidget {
                 Column(
                   children: [
                     // display profile
-                    InkWell(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/profilepage');
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            CircleAvatar(
-                              backgroundColor: Colors.transparent,
-                              radius: 50,
-                              child: Image(
-                                image: AssetImage(
-                                  "images/person.jpg",
-                                ),
-                                loadingBuilder:
-                                    (context, child, loadingProgress) {
-                                  if (loadingProgress == null) return child;
-                                  return Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                },
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    child: Icon(Icons.error_outline),
-                                  );
-                                },
+                    Container(
+                      decoration: BoxDecoration(),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: Colors.transparent,
+                            radius: 50,
+                            child: Image(
+                              image: AssetImage(
+                                "images/person.jpg",
                               ),
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              },
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  child: Icon(Icons.error_outline),
+                                );
+                              },
                             ),
-                            SizedBox(width: 10),
-                            Text(
-                              "@${userData['username']}",
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: isDarkMode
-                                      ? Theme.of(context)
-                                          .colorScheme
-                                          .inversePrimary
-                                      : Theme.of(context).colorScheme.primary),
-                            ),
-                          ],
-                        ),
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            "@${userData['username']}",
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: isDarkMode
+                                    ? Theme.of(context)
+                                        .colorScheme
+                                        .inversePrimary
+                                    : Theme.of(context).colorScheme.primary),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(
@@ -175,13 +173,14 @@ class SettingsPage extends StatelessWidget {
                                   .signOut()
                                   .whenComplete(
                                 () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    PageTransition(
-                                      child: AuthPage(),
-                                      type: PageTransitionType.topToBottom,
-                                    ),
-                                  );
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      PageTransition(
+                                        child: AuthPage(),
+                                        type: PageTransitionType.bottomToTop,
+                                        duration: Durations.long1,
+                                      ),
+                                      (context) => false);
                                 },
                               );
                             },
