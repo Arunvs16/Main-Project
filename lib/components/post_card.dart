@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 class PostCard extends StatelessWidget {
-  String timeAgo, caption, imageUrl;
+  String timeAgo, caption, imageUrl, username;
   final void Function()? onPressed;
   PostCard({
     super.key,
     required this.caption,
+    required this.username,
     required this.timeAgo,
     required this.imageUrl,
     required this.onPressed,
@@ -45,10 +46,11 @@ class PostCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             // username
+
                             Text(
-                              'usename',
+                              username,
                               style: TextStyle(
-                                fontSize: 20,
+                                // fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -65,6 +67,7 @@ class PostCard extends StatelessWidget {
                       ),
                     ],
                   ),
+                  
                   // delete
                   IconButton(
                       onPressed: onPressed,
@@ -109,10 +112,42 @@ class PostCard extends StatelessWidget {
                 ),
               ),
               Container(
-                color: Colors.blue,
-                height: MediaQuery.of(context).size.height * .0,
-                width: MediaQuery.of(context).size.width,
-              )
+                  color: Colors.blue,
+                  height: MediaQuery.of(context).size.height * .084,
+                  width: MediaQuery.of(context).size.width,
+                  child: Center(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          children: [
+                            // like
+                            Icon(
+                              Icons.favorite_outline,
+                              size: 35,
+                            ),
+
+                            // like count
+                            Text('10'),
+                          ],
+                        ),
+                        const SizedBox(width: 10),
+                        Column(
+                          children: [
+                            // comments
+                            Icon(
+                              Icons.comment,
+                              size: 35,
+                            ),
+
+                            // comment count
+                            Text('7'),
+                          ],
+                        )
+                      ],
+                    ),
+                  ))
             ],
           ),
         ],

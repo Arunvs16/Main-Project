@@ -11,27 +11,25 @@ class MyListTile extends StatelessWidget {
   Widget? leading;
   String titleText;
   String subTitleText;
-  Color? color;
+  Color? color1;
+  Color? color2;
 
   MyListTile({
     super.key,
     required this.onTap,
-    // required this.left,
-    // required this.right,
     required this.horizontal,
     required this.vertical,
     required this.leading,
     required this.titleText,
     required this.subTitleText,
-    required this.color,
+    required this.color1,
+    required this.color2,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-        // left: left,
-        // right: right,
         horizontal: horizontal,
         vertical: vertical,
       ),
@@ -40,11 +38,11 @@ class MyListTile extends StatelessWidget {
           leading: leading,
           title: Text(
             titleText,
-            style: TextStyle(color: color),
+            style: TextStyle(color: color1),
           ),
           subtitle: Text(
             subTitleText,
-            style: TextStyle(color: color),
+            style: TextStyle(color: color2),
           ),
           onTap: onTap),
     );

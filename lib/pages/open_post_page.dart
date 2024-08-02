@@ -21,6 +21,8 @@ class OpenPostPage extends StatelessWidget {
       body: // my posts
           StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
+            .collection("Users")
+            .doc(user.uid)
             .collection("Posts")
             .orderBy('timestamp', descending: true)
             .snapshots(),
@@ -64,6 +66,7 @@ class OpenPostPage extends StatelessWidget {
 
               // return as a container
               return PostCard(
+                username: post['userId'],
                 caption: caption,
                 timeAgo: timeAgo,
                 imageUrl: imageUrl,

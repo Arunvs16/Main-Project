@@ -27,7 +27,8 @@ class HelpPage extends StatelessWidget {
             ),
             titleText: "Terms of Serices",
             subTitleText: "About our services",
-            color: Theme.of(context).colorScheme.primary,
+            color1: Theme.of(context).colorScheme.primary,
+            color2: Theme.of(context).colorScheme.primary,
           ),
 
           // Privacy Policy
@@ -43,7 +44,8 @@ class HelpPage extends StatelessWidget {
             ),
             titleText: "Privacy Polocy",
             subTitleText: "End-to-end Encryption",
-            color: Theme.of(context).colorScheme.primary,
+            color1: Theme.of(context).colorScheme.primary,
+            color2: Theme.of(context).colorScheme.primary,
           ),
 
           //app info
@@ -59,7 +61,8 @@ class HelpPage extends StatelessWidget {
             ),
             titleText: "App Info",
             subTitleText: "About the app",
-            color: Theme.of(context).colorScheme.primary,
+            color1: Theme.of(context).colorScheme.primary,
+            color2: Theme.of(context).colorScheme.primary,
           ),
         ],
       ),

@@ -70,7 +70,7 @@ class ChatListPage extends StatelessWidget {
   Widget _buildUserListItem(
       Map<String, dynamic> userData, BuildContext context) {
     // debug: print individual user data
-    print("User Data: $userData");
+    print("User Data -> $userData");
 
     // display all the users except current user
     return FutureBuilder(

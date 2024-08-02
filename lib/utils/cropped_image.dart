@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:uuid/uuid.dart';
 
 class CroppedImage extends StatelessWidget {
   final CroppedFile image;
@@ -20,6 +21,7 @@ class CroppedImage extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<void> uploadImageAndCaption(BuildContext context) async {
+    String postId = Uuid().v1();
     try {
       isLoading.value = true;
 
@@ -61,8 +63,10 @@ class CroppedImage extends StatelessWidget {
 
       // Save the image URL and caption to Firestore
       await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(user.uid)
           .collection('Posts')
-          .doc(_auth.currentUser!.uid)
+          .doc(postId)
           .set(
         {
           'imageUrl': downloadUrl,

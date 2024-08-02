@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -69,6 +71,8 @@ class HomePage extends StatelessWidget {
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
+                  .collection("Users")
+                  .doc(user.uid)
                   .collection("Posts")
                   .orderBy('timestamp', descending: true)
                   .snapshots(),
@@ -112,6 +116,7 @@ class HomePage extends StatelessWidget {
 
                     // return as a container
                     return PostCard(
+                      username: post['userId'],
                       caption: caption,
                       timeAgo: timeAgo,
                       imageUrl: imageUrl,
@@ -147,10 +152,10 @@ class HomePage extends StatelessWidget {
                                 ),
                                 onPressed: () {
                                   FirebaseFirestore.instance
+                                      .collection("Users")
+                                      .doc(user.uid)
                                       .collection("Posts")
-                                      .doc(user.uid
-                                          // add post id
-                                          )
+                                      .doc(post.id)
                                       .delete()
                                       .whenComplete(
                                     () {
@@ -169,13 +174,35 @@ class HomePage extends StatelessWidget {
               },
             ),
           ),
+
           // logged in as
-          Text(
-            "Logged in as: ${user.email}",
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
-          ),
-          const SizedBox(
-            height: 20,
+          StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection("Users")
+                .doc(user.uid)
+                .snapshots(),
+            builder: (context, snapshot) {
+              // errors
+              if (snapshot.hasError) {
+                return Text(e.toString());
+              }
+
+              // loading
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Text('Loading...');
+              }
+
+              // something wrong
+              if (snapshot.data == null) {
+                return Text('Something went wrong');
+              }
+
+              final userData = snapshot.data!;
+              return Text(
+                "${userData['username']}",
+                style: TextStyle(color: Theme.of(context).colorScheme.surface),
+              );
+            },
           ),
         ],
       ),

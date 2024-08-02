@@ -17,8 +17,7 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userDataProvider =
-        Provider.of<UserDataProvider>(context, listen: false);
+    final userDataProvider = Provider.of<UserDataProvider>(context);
     bool isDarkMode =
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
 
@@ -35,6 +34,7 @@ class ProfilePage extends StatelessWidget {
                   .collection("Users")
                   .doc(currentUser.uid)
                   .snapshots(),
+              // userDataProvider.documentStream,
               builder: (context, snapshot) {
                 // get user data
                 if (snapshot.hasData) {
@@ -113,15 +113,52 @@ class ProfilePage extends StatelessWidget {
                       ),
 
                       // bio
-                      MyTextBox(
-                        onTap: () {
-                          userDataProvider.editField(context, "bio");
-                        },
-                        bioHeader: "Bio :",
-                        bio: userData['bio'],
-                        onPressed: () {
-                          userDataProvider.editField(context, "bio");
-                        },
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        margin: EdgeInsets.only(left: 20, top: 20, right: 20),
+                        padding: EdgeInsets.only(left: 20, bottom: 20, top: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // bio header
+                                Text(
+                                  'Bio',
+                                  style: TextStyle(
+                                      color: isDarkMode
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .inversePrimary
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .primary),
+                                ),
+
+                                // edit icon
+                                IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(Icons.edit,
+                                        color: Colors.transparent))
+                              ],
+                            ),
+                            // bio
+                            Text(
+                              userData['bio'],
+                              style: TextStyle(
+                                  color: isDarkMode
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .inversePrimary
+                                      : Theme.of(context).colorScheme.primary),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   );

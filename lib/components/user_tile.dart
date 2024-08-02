@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:main_project/Providers/theme_provider.dart';
 import 'package:main_project/components/my_list_tile.dart';
+import 'package:provider/provider.dart';
 
 class UserTile extends StatelessWidget {
   final String username;
@@ -14,6 +16,8 @@ class UserTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDarkMode =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
     return MyListTile(
       onTap: onTap,
       leading: ClipRRect(
@@ -38,7 +42,10 @@ class UserTile extends StatelessWidget {
       subTitleText: text,
       horizontal: 0,
       vertical: 5,
-      color: Theme.of(context).colorScheme.primary,
+      color1: isDarkMode
+          ? Theme.of(context).colorScheme.inversePrimary
+          : Theme.of(context).colorScheme.primary,
+      color2: Theme.of(context).colorScheme.surface,
     );
   }
 }

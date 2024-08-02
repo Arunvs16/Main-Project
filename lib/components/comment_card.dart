@@ -41,14 +41,15 @@ class CommentCard extends StatelessWidget {
           Row(
             children: [
               // Profile pic
-              CircleAvatar(
-                backgroundColor: Colors.transparent,
-                backgroundImage: NetworkImage(
-                  "https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png",
+              Container(
+                // margin: EdgeInsets.only(left: 10, top: 10),
+                height: MediaQuery.of(context).size.height * 0.06,
+                width: MediaQuery.of(context).size.height * 0.06,
+                child: CircleAvatar(
+                  backgroundImage: AssetImage('images/person.jpg'),
                 ),
-                radius: 25,
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 20),
               // Comment and username
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

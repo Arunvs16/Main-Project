@@ -5,16 +5,17 @@ import 'package:main_project/Providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 class UserDataProvider with ChangeNotifier {
-  // user
+  // User
   final User currentUser = FirebaseAuth.instance.currentUser!;
 
-  // firestore instance
+  // Firestore instance
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  // all users
-  final userCollection = FirebaseFirestore.instance.collection("Users");
+  // Collection reference
+  final CollectionReference userCollection =
+      FirebaseFirestore.instance.collection("Users");
 
-  void editField(BuildContext context, String field) async {
+  Future<void> editField(BuildContext context, String field) async {
     String newValue = "";
     bool isDarkMode =
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
@@ -27,16 +28,18 @@ class UserDataProvider with ChangeNotifier {
         title: Text(
           "Edit $field",
           style: TextStyle(
-              color: isDarkMode
-                  ? Theme.of(context).colorScheme.inversePrimary
-                  : Theme.of(context).colorScheme.primary),
+            color: isDarkMode
+                ? Theme.of(context).colorScheme.inversePrimary
+                : Theme.of(context).colorScheme.primary,
+          ),
         ),
         content: TextField(
           autofocus: true,
           style: TextStyle(
-              color: isDarkMode
-                  ? Theme.of(context).colorScheme.inversePrimary
-                  : Theme.of(context).colorScheme.primary),
+            color: isDarkMode
+                ? Theme.of(context).colorScheme.inversePrimary
+                : Theme.of(context).colorScheme.primary,
+          ),
           decoration: InputDecoration(
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(
@@ -58,44 +61,48 @@ class UserDataProvider with ChangeNotifier {
           },
         ),
         actions: [
-          // cancel button
+          // Cancel button
           MaterialButton(
             color: Theme.of(context).colorScheme.secondary,
             onPressed: () => Navigator.pop(context),
             child: Text(
               "Cancel",
               style: TextStyle(
-                  color: isDarkMode
-                      ? Theme.of(context).colorScheme.inversePrimary
-                      : Theme.of(context).colorScheme.primary),
+                color: isDarkMode
+                    ? Theme.of(context).colorScheme.inversePrimary
+                    : Theme.of(context).colorScheme.primary,
+              ),
             ),
           ),
 
-          // save button
+          // Save button
           MaterialButton(
             color: Theme.of(context).colorScheme.primary,
             onPressed: () {
               saveClicked = true; // Set the flag when save button is clicked
               Navigator.of(context).pop();
-              print('Bio updated => $newValue');
+              print("$field changed to -> $newValue");
             },
             child: Text(
               "Save",
               style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary),
+                color: Theme.of(context).colorScheme.inversePrimary,
+              ),
             ),
           ),
         ],
       ),
     );
 
-    // update in firestore only if save button was clicked
+    // Update in Firestore only if save button was clicked and newValue is not empty
     if (saveClicked && newValue.trim().isNotEmpty) {
-      await userCollection.doc(currentUser.uid).update(
+      await firestore.collection("Users").doc(currentUser.uid).update(
         {
           field: newValue,
         },
       );
+
+      notifyListeners();
     }
   }
 }

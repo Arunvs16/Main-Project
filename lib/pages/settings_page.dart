@@ -133,7 +133,8 @@ class SettingsPage extends StatelessWidget {
                       titleText: "Help",
                       subTitleText:
                           "Term and Conditons, Privacy policy, App info",
-                      color: Theme.of(context).colorScheme.primary,
+                      color1: Theme.of(context).colorScheme.primary,
+                      color2: Theme.of(context).colorScheme.primary,
                     ),
                   ],
                 ),
@@ -197,7 +198,8 @@ class SettingsPage extends StatelessWidget {
                   ),
                   titleText: "LOGOUT",
                   subTitleText: "Logout from your account",
-                  color: Theme.of(context).colorScheme.primary,
+                  color1: Theme.of(context).colorScheme.primary,
+                  color2: Theme.of(context).colorScheme.primary,
                 ),
               ],
             );
