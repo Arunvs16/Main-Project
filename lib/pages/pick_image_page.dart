@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:main_project/utils/cropped_image.dart';
+import 'package:main_project/utils/add_post_page.dart';
 
-class AddPostPage extends StatefulWidget {
-  const AddPostPage({super.key});
+class PicImagePage extends StatefulWidget {
+  const PicImagePage({super.key});
 
   @override
-  State<AddPostPage> createState() => _AddPostPageState();
+  State<PicImagePage> createState() => _PicImagePageState();
 }
 
-class _AddPostPageState extends State<AddPostPage> {
+class _PicImagePageState extends State<PicImagePage> {
   void pickImage(bool pickGalleryImage) async {
     XFile? image;
     final picker = ImagePicker();
@@ -31,7 +31,7 @@ class _AddPostPageState extends State<AddPostPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CroppedImage(
+            builder: (context) => AddPostToFeed(
               image: croppedImage,
             ),
           ),
@@ -97,6 +97,7 @@ class _AddPostPageState extends State<AddPostPage> {
         backgroundColor: Colors.transparent,
         title: Text("Add Post"),
       ),
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

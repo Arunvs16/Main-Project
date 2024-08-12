@@ -181,3 +181,23 @@ class PostLikeProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+class FollowFollowing {
+  Future<int> followsNum(String userId) async {
+    QuerySnapshot followersSnapshot = await FirebaseFirestore.instance
+        .collection("Followers")
+        .doc(userId)
+        .collection("userFollowers")
+        .get();
+    return followersSnapshot.docs.length;
+  }
+
+  Future<int> followingNum(String userId) async {
+    QuerySnapshot followingSnapshot = await FirebaseFirestore.instance
+        .collection("Following")
+        .doc(userId)
+        .collection("userFollowing")
+        .get();
+    return followingSnapshot.docs.length;
+  }
+}

@@ -8,6 +8,7 @@ import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/components/my_list_tile.dart';
 import 'package:main_project/Providers/theme_provider.dart';
 import 'package:main_project/pages/auth/auth_page.dart';
+import 'package:main_project/services/auth_service.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +17,9 @@ class SettingsPage extends StatelessWidget {
 
   // user
   final currentUser = FirebaseAuth.instance.currentUser!;
+
+  // access auth
+  final _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -145,6 +149,8 @@ class SettingsPage extends StatelessWidget {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.background,
                         content: Text(
                           'Do you want to logout of your account?',
                           style: TextStyle(
@@ -169,10 +175,7 @@ class SettingsPage extends StatelessWidget {
                                   color: Theme.of(context).colorScheme.error),
                             ),
                             onPressed: () {
-                              Provider.of<Authentication>(context,
-                                      listen: false)
-                                  .signOut()
-                                  .whenComplete(
+                              _auth.logout().whenComplete(
                                 () {
                                   Navigator.pushAndRemoveUntil(
                                       context,

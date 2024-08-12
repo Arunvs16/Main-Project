@@ -11,6 +11,7 @@ class TermsOfServices extends StatelessWidget {
         backgroundColor: Colors.transparent,
         title: Text("Terms of Services"),
       ),
+      backgroundColor: Theme.of(context).colorScheme.background,
     );
   }
 }

@@ -14,6 +14,7 @@ class SearchPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         title: Text("Search Profile"),
       ),
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Column(
         children: [
           const SizedBox(

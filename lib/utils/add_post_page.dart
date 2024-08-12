@@ -1,32 +1,33 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:main_project/model/post.dart';
+import 'package:main_project/model/user.dart';
+import 'package:main_project/services/auth_service.dart';
 import 'package:uuid/uuid.dart';
 
-class CroppedImage extends StatelessWidget {
+class AddPostToFeed extends StatelessWidget {
   final CroppedFile image;
   final ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
 
-  CroppedImage({
+  AddPostToFeed({
     super.key,
     required this.image,
   });
 
   final TextEditingController captionController = TextEditingController();
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final _firestore = FirebaseFirestore.instance;
+
+  // final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<void> uploadImageAndCaption(BuildContext context) async {
     String postId = Uuid().v1();
     try {
       isLoading.value = true;
-
-      // Initialize Firebase
-      await Firebase.initializeApp();
 
       // Check if the user is authenticated
       User? user = FirebaseAuth.instance.currentUser;
@@ -62,19 +63,23 @@ class CroppedImage extends StatelessWidget {
       String downloadUrl = await taskSnapshot.ref.getDownloadURL();
 
       // Save the image URL and caption to Firestore
-      await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(user.uid)
-          .collection('Posts')
-          .doc(postId)
-          .set(
-        {
-          'imageUrl': downloadUrl,
-          'caption': captionController.text,
-          'timestamp': Timestamp.now(),
-          'userId': user.uid,
-        },
+      final Timestamp timestamp = Timestamp.now();
+
+      final AuthService _user = AuthService();
+
+      PostData post = PostData(
+        email: _user.getCurrentUserEmail(),
+        caption: captionController.text,
+        postID: postId,
+        imageURL: downloadUrl,
+        timestamp: timestamp,
+        like: [],
       );
+      // convert user into a map so that we can store in firestore
+      final postMap = post.toMap();
+
+      // save post into info in firestore
+      await _firestore.collection("Posts").doc(postId).set(postMap);
 
       // Show a success message
       ScaffoldMessenger.of(context).showSnackBar(
@@ -114,7 +119,7 @@ class CroppedImage extends StatelessWidget {
       appBar: AppBar(
         foregroundColor: Theme.of(context).colorScheme.primary,
         backgroundColor: Colors.transparent,
-        title: Text("Cropped Image"),
+        title: Text("Add Post"),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
@@ -143,6 +148,7 @@ class CroppedImage extends StatelessWidget {
           ),
         ],
       ),
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: SingleChildScrollView(
         child: Center(
           child: Column(

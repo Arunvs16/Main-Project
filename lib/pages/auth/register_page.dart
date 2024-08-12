@@ -1,11 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/components/google_button.dart';
 import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/components/my_button.dart';
 import 'package:main_project/components/my_text_field.dart';
-import 'package:main_project/services/google_sign_in.dart';
+import 'package:main_project/services/auth_service.dart';
+import 'package:main_project/services/firestore.dart';
 
 class RegisterPage extends StatelessWidget {
   final Function()? onTap;
@@ -14,8 +14,13 @@ class RegisterPage extends StatelessWidget {
     required this.onTap,
   });
 
+  // access auth & firestore
+  final _auth = AuthService();
+
+  final _firestore = Firestore();
+
   // text controllers
-  final userNameController = TextEditingController();
+  final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -23,51 +28,41 @@ class RegisterPage extends StatelessWidget {
   // sign up user method
   void signUp(BuildContext context) async {
     // show loading circle
-    showDialog(
-      context: context,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
+    showLoadingCircle(context);
 
     //password don't match -> tell user to fix
     if (passwordController.text != confirmPasswordController.text) {
       // pop loading circle
-      Navigator.pop(context);
-
+      hideLoadingCircle(context);
       // show error message to user
       displayMessageToUser("Passwords don't match", context);
-    } else {
+    } else if (passwordController.text == confirmPasswordController.text) {
       //password match -> create user
       try {
-        UserCredential userCredential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
+        UserCredential userCredential = await _auth.registerEmailPassword(
+          emailController.text,
+          passwordController.text,
         );
 
         // Get user UID
         String uid = userCredential.user!.uid;
 
         // after creating the user, create a new document in the cloud firestore called users
-        await FirebaseFirestore.instance.collection("Users").doc(uid).set({
-          'username': userNameController.text,
-          'uid': uid,
-          'email': emailController.text,
-          'profilePicUrl': '',
-          'bio': "Add bio",
-        });
+        await _firestore.saveUserInfoInFirestore(
+            email: emailController.text, name: nameController.text);
 
         // pop loading circle
-        Navigator.pop(context);
+        hideLoadingCircle(context);
       } on FirebaseAuthException catch (error) {
         // pop loading circle
-        Navigator.pop(context);
+        hideLoadingCircle(context);
 
         // display error message
         displayMessageToUser(
             error.message ?? "An unknown error occurred", context);
       }
+    } else {
+      displayMessageToUser('Somethong went wrong', context);
     }
   }
 
@@ -100,8 +95,8 @@ class RegisterPage extends StatelessWidget {
               const SizedBox(height: 30),
               // user name text field
               MyTextField(
-                controller: userNameController,
-                hintText: 'Username',
+                controller: nameController,
+                hintText: 'Name',
                 obscureText: false,
               ),
               const SizedBox(height: 20),
@@ -145,7 +140,7 @@ class RegisterPage extends StatelessWidget {
               const SizedBox(height: 20),
               // google Sign In
               GButton(
-                onTap: () => GService().signInWithGoogle(),
+                onTap: () => _auth.signInWithGoogle(),
               ),
               const SizedBox(height: 20),
 

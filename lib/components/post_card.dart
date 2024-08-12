@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class PostCard extends StatelessWidget {
-  String timeAgo, caption, imageUrl, username;
+  String timeAgo, caption, imageURL, username;
   final void Function()? onPressed;
   PostCard({
     super.key,
     required this.caption,
     required this.username,
     required this.timeAgo,
-    required this.imageUrl,
+    required this.imageURL,
     required this.onPressed,
   });
 
@@ -67,7 +67,7 @@ class PostCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  
+
                   // delete
                   IconButton(
                       onPressed: onPressed,
@@ -96,7 +96,7 @@ class PostCard extends StatelessWidget {
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(color: Colors.green),
                   child: Image.network(
-                    imageUrl,
+                    imageURL,
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) return child;
                       return Center(

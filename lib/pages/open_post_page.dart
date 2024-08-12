@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/components/post_card.dart';
+import 'package:main_project/services/firestore.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class OpenPostPage extends StatelessWidget {
@@ -9,6 +10,9 @@ class OpenPostPage extends StatelessWidget {
 
   // user
   final user = FirebaseAuth.instance.currentUser!;
+
+  // access firestore
+  final _firestore = Firestore();
 
   @override
   Widget build(BuildContext context) {
@@ -18,14 +22,10 @@ class OpenPostPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         title: Text("Posts"),
       ),
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: // my posts
-          StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection("Users")
-            .doc(user.uid)
-            .collection("Posts")
-            .orderBy('timestamp', descending: true)
-            .snapshots(),
+          FutureBuilder<Map<String, dynamic>>(
+        future: _firestore.getUserAndPostData(user.uid),
         builder: (context, snapshot) {
           // show errors
           if (snapshot.hasError) {
@@ -43,14 +43,18 @@ class OpenPostPage extends StatelessWidget {
               ),
             );
           }
-          // get all posts
-          final posts = snapshot.data!.docs;
-          // no data
-          if (snapshot.data == null || posts.isEmpty) {
+
+          // get user data and posts
+          var userData = snapshot.data!['userData'];
+          var posts = snapshot.data!['postData'] as List<QueryDocumentSnapshot>;
+
+          // no posts
+          if (posts.isEmpty) {
             return Center(
               child: Text('No posts'),
             );
           }
+
           // return as a list
           return ListView.builder(
             itemCount: posts.length,
@@ -59,17 +63,17 @@ class OpenPostPage extends StatelessWidget {
               final post = posts[index];
               // get data from each post
               String caption = post['caption'];
-              String imageUrl = post['imageUrl'];
+              String imageUrl = post['imageURL'];
               Timestamp timestamp = post['timestamp'];
               DateTime dateTime = timestamp.toDate();
               String timeAgo = timeago.format(dateTime);
 
               // return as a container
               return PostCard(
-                username: post['userId'],
+                username: "@${userData['username']}",
                 caption: caption,
                 timeAgo: timeAgo,
-                imageUrl: imageUrl,
+                imageURL: imageUrl,
                 onPressed: () {
                   showDialog(
                     context: context,

@@ -58,18 +58,20 @@ class CommentCard extends StatelessWidget {
                   Text(
                     username,
                     style: TextStyle(
-                        color: isDarkMode
-                            ? Theme.of(context).colorScheme.inversePrimary
-                            : Theme.of(context).colorScheme.primary),
+                      color: isDarkMode
+                          ? Theme.of(context).colorScheme.inversePrimary
+                          : Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                   const SizedBox(height: 2),
                   // Comment
                   Text(
                     comment,
                     style: TextStyle(
-                        color: isDarkMode
-                            ? Theme.of(context).colorScheme.inversePrimary
-                            : Theme.of(context).colorScheme.primary),
+                      color: isDarkMode
+                          ? Theme.of(context).colorScheme.inversePrimary
+                          : Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                 ],
               ),

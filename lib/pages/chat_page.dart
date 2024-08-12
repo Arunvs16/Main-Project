@@ -67,6 +67,7 @@ class ChatPage extends StatelessWidget {
           title: Text(receiverEmail),
         ),
       ),
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Column(
         children: [
           // display all the messages
@@ -168,7 +169,7 @@ class ChatPage extends StatelessWidget {
             margin: EdgeInsets.only(right: 25),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Theme.of(context).colorScheme.surface,
+              color: Theme.of(context).colorScheme.primary,
             ),
             child: IconButton(
               onPressed: () {

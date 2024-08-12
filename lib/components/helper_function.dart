@@ -12,3 +12,21 @@ void displayMessageToUser(String message, BuildContext context) {
     ),
   );
 }
+
+// show loading circle
+void showLoadingCircle(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      backgroundColor: Colors.transparent,
+      content: Center(
+        child: CircularProgressIndicator(),
+      ),
+    ),
+  );
+}
+
+// hide loading circle
+void hideLoadingCircle(BuildContext context) {
+  Navigator.pop(context);
+}

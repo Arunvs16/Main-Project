@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/auth_page_provider.dart';
 import 'package:main_project/Providers/authentication.dart';
+import 'package:main_project/Providers/database_provider.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/pages_provider.dart';
 import 'package:main_project/firebase_options.dart';
@@ -15,6 +16,7 @@ import 'package:main_project/pages/profile_page.dart';
 import 'package:main_project/pages/settings_page.dart';
 import 'package:main_project/pages/help/terms_of_services.dart';
 import 'package:main_project/Providers/theme_provider.dart';
+import 'package:main_project/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -25,11 +27,15 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        // Theme
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        // database
+        ChangeNotifierProvider(create: (_) => DatabaseProvider()),
+
         ChangeNotifierProvider(create: (_) => Authentication()),
         ChangeNotifierProvider(create: (_) => AuthPageProvider()),
         ChangeNotifierProvider(create: (_) => CommentDataProvider()),
         ChangeNotifierProvider(create: (_) => PostLikeProvider()),
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => PagesProvider()),
         ChangeNotifierProvider(create: (_) => UserDataProvider()),
       ],
@@ -45,6 +51,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
+    // access auth
+
+    final _auth = AuthService();
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: const AuthPage(),
@@ -52,7 +62,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/mainpage': (context) => MainPage(),
         '/settings': (context) => SettingsPage(),
-        '/profilepage': (context) => ProfilePage(),
+        '/profilepage': (context) => ProfilePage(uid: _auth.getCurrentUserUid(),),
         '/helpPage': (context) => HelpPage(),
         '/termsOfServices': (context) => TermsOfServices(),
         '/PrivacyPolicy': (context) => PrivacyPolicyPage(),

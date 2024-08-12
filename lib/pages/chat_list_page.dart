@@ -11,7 +11,6 @@ class ChatListPage extends StatelessWidget {
   // chat service and auth
   final ChatService _chatService = ChatService();
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +20,7 @@ class ChatListPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         title: Text("Chats"),
       ),
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: _buildUserList(),
     );
   }

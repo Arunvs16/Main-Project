@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/theme_provider.dart';
-import 'package:main_project/admin/auth_page.dart';
-import 'package:main_project/admin/main_page.dart';
-import 'package:main_project/components/helper_function.dart';
+import 'package:main_project/admin_panel/auth_page.dart';
+import 'package:main_project/admin_panel/main_page.dart';
 import 'package:main_project/components/my_button.dart';
 import 'package:main_project/components/my_text_field.dart';
 import 'package:page_transition/page_transition.dart';
@@ -15,18 +14,15 @@ class AdminLoginPage extends StatelessWidget {
     required this.onTap,
   });
 
+  // admin auth
+  final AdminAuthPage adminAuth = AdminAuthPage();
+
   // text controllers
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  // admin auth instance
-  final AdminAuthPage _adminAuthPage = AdminAuthPage();
-
   // sign user in method
   Future<void> signInUser(BuildContext context) async {
-    String email = 'avs4164@gmail.com';
-    String password = '12345678';
-
     showDialog(
       context: context,
       builder: (context) => const Center(
@@ -34,28 +30,25 @@ class AdminLoginPage extends StatelessWidget {
       ),
     );
 
-    if (emailController.text == email && passwordController.text == password) {
-      await _adminAuthPage.adminSignIn(
-        emailController.text,
-        passwordController.text,
+    try {
+      await adminAuth.adminSignIn(
+          emailController.text, passwordController.text);
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        PageTransition(
+            child: AdminMainPage(), type: PageTransitionType.rightToLeft),
+        (route) => false,
       );
-      // pop the circle-572
-      if (context.mounted) Navigator.pop(context);
-    }
-    // if not same
-    else if (emailController.text != email &&
-        passwordController.text != password) {
-      // pop the circle
+    } catch (e) {
       Navigator.pop(context);
-
-      // go back to login page
-      Navigator.pop(context);
-
-      // show error message to user
-      displayMessageToUser('Something went wrong', context);
-    } else if (emailController.text.isEmpty &&
-        passwordController.text.isEmpty) {
-      displayMessageToUser('Fill all the fields', context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.toString(),
+          ),
+        ),
+      );
     }
   }
 
@@ -108,18 +101,7 @@ class AdminLoginPage extends StatelessWidget {
               MyButton(
                 text: "Login",
                 onTap: () {
-                  signInUser(context).whenComplete(
-                    () {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        PageTransition(
-                          child: AdminMainPage(),
-                          type: PageTransitionType.bottomToTop,
-                        ),
-                        (context) => false,
-                      );
-                    },
-                  );
+                  signInUser(context);
                 },
               ),
             ],
