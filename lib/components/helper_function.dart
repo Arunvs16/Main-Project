@@ -5,6 +5,7 @@ void displayMessageToUser(String message, BuildContext context) {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       title: Text(
         message,
         textAlign: TextAlign.center,

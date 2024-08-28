@@ -5,6 +5,7 @@ import 'package:main_project/Providers/authentication.dart';
 import 'package:main_project/Providers/database_provider.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/pages_provider.dart';
+import 'package:main_project/Providers/user_provider.dart';
 import 'package:main_project/firebase_options.dart';
 import 'package:main_project/pages/comment_page.dart';
 import 'package:main_project/pages/help/app_info_page.dart';
@@ -31,6 +32,8 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         // database
         ChangeNotifierProvider(create: (_) => DatabaseProvider()),
+        // user details
+        ChangeNotifierProvider(create: (_) => UserProvider()),
 
         ChangeNotifierProvider(create: (_) => Authentication()),
         ChangeNotifierProvider(create: (_) => AuthPageProvider()),
@@ -62,12 +65,10 @@ class MyApp extends StatelessWidget {
       routes: {
         '/mainpage': (context) => MainPage(),
         '/settings': (context) => SettingsPage(),
-        '/profilepage': (context) => ProfilePage(uid: _auth.getCurrentUserUid(),),
         '/helpPage': (context) => HelpPage(),
         '/termsOfServices': (context) => TermsOfServices(),
         '/PrivacyPolicy': (context) => PrivacyPolicyPage(),
         '/appInfo': (context) => AppInfoPage(),
-        '/comments': (context) => CommentPage(),
       },
     );
   }

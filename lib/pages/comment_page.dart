@@ -3,30 +3,43 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/theme_provider.dart';
+import 'package:main_project/services/firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:main_project/components/comment_card.dart';
 import 'package:main_project/components/my_text_field.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class CommentPage extends StatelessWidget {
-  CommentPage({super.key});
+  final String postId;
+  CommentPage({
+    super.key,
+    required this.postId,
+  });
+
+  final _firestore = Firestore();
 
   // user
   final currentUser = FirebaseAuth.instance.currentUser!;
 
   // text controller
-  final textController = TextEditingController();
+  final commentController = TextEditingController();
 
-  void postComment(BuildContext context) {
-    if (textController.text.isNotEmpty) {
-      Provider.of<CommentDataProvider>(context, listen: false)
-          .postComment(textController.text, currentUser.email!);
+  void postComment(BuildContext context) async {
+    if (commentController.text.isNotEmpty) {
+      await _firestore.postCommentToFirestore(postId: postId, data: {
+        'username': currentUser.email,
+        'comment': commentController.text,
+        'likes': [],
+        'TimeStamp': Timestamp.now(),
+      });
     }
-    textController.clear();
+    commentController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
-    final commentDataProvider = Provider.of<CommentDataProvider>(context);
+    final commentDataProvider =
+        Provider.of<CommentDataProvider>(context, listen: false);
     bool isDarkMode =
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
 
@@ -36,58 +49,71 @@ class CommentPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         title: Text("Comments"),
       ),
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Center(
         child: Column(
           children: [
             // comments
             Expanded(
-              child: StreamBuilder(
-                stream: commentDataProvider.orderedDataStream,
-                builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        "Error: ${snapshot.error}",
-                      ),
-                    );
-                  } else if (snapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    );
-                  } else if (snapshot.hasData) {
-                    final List<DocumentSnapshot> docs = snapshot.data!.docs;
+              child: FutureBuilder<Map<String, dynamic>>(
+                  future: commentDataProvider.getPostAndCommentData(postId),
+                  builder: (context, snapshot) {
+                    // show errors
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text(
+                          snapshot.error.toString(),
+                        ),
+                      );
+                    }
+                    // show loading circle
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      );
+                    }
+
+                    // get post data and comments
+                    var postData = snapshot.data!['postData'];
+                    var comments = snapshot.data!['cmtData']
+                        as List<QueryDocumentSnapshot>;
+
+                    // no posts
+                    if (comments.isEmpty) {
+                      return Center(
+                        child: Text('No Comments'),
+                      );
+                    }
                     return ListView.builder(
-                      itemCount: docs.length,
+                      itemCount: comments.length,
                       itemBuilder: (context, index) {
-                        final DocumentSnapshot post = docs[index];
+                        // get each individual post
+                        final DocumentSnapshot comment = comments[index];
+                        Timestamp timestamp = comment['TimeStamp'];
+                        DateTime dateTime = timestamp.toDate();
+                        String timeAgo = timeago.format(dateTime);
                         return CommentCard(
-                          comment: post['comment'],
-                          username: post['username'],
-                          postID: post.id,
-                          likes: List<String>.from(post['likes'] ?? []),
+                          time: timeAgo,
+                          comment: comment['comment'],
+                          username: comment['username'],
+                          postID: postId,
+                          cmtId: comment.id,
+                          likes: List<String>.from(comment['likes'] ?? ['']),
                         );
                       },
                     );
-                  } else {
-                    // no data
-                    return Center(
-                      child: Text("No comments found"),
-                    );
-                  }
-                },
-              ),
+                  }),
             ),
+
             Padding(
               padding: const EdgeInsets.all(25.0),
               child: Row(
                 children: [
                   Expanded(
                     child: MyTextField(
-                      controller: textController,
+                      controller: commentController,
                       hintText: "Type something",
                       obscureText: false,
                     ),

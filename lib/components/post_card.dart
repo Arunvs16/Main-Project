@@ -1,23 +1,42 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:main_project/Providers/firestore_provider.dart';
+import 'package:main_project/Providers/theme_provider.dart';
+import 'package:main_project/components/like_button.dart';
+import 'package:main_project/pages/comment_page.dart';
+import 'package:provider/provider.dart';
 
 class PostCard extends StatelessWidget {
-  String timeAgo, caption, imageURL, username;
-  final void Function()? onPressed;
+  String timeAgo, caption, imageURL, username, postId;
+  final List<String> likes;
+
+  final void Function()? onPressedDlt;
   PostCard({
     super.key,
     required this.caption,
     required this.username,
     required this.timeAgo,
     required this.imageURL,
-    required this.onPressed,
+    required this.onPressedDlt,
+    required this.postId,
+    required this.likes,
   });
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser!;
+    final isLiked = likes.contains(currentUser.email);
+    final postLikeProvider =
+        Provider.of<PostLikeProvider>(context, listen: false);
+    bool isDarkMode =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
+
     return Container(
       decoration: BoxDecoration(
-          border: Border.all(color: Colors.green, width: 2),
-          color: Theme.of(context).colorScheme.secondary),
+        color: Theme.of(context).colorScheme.secondary,
+        border:
+            Border.all(color: Theme.of(context).colorScheme.primary, width: 1),
+      ),
       height: MediaQuery.of(context).size.height * 0.75,
       child: Column(
         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -70,10 +89,11 @@ class PostCard extends StatelessWidget {
 
                   // delete
                   IconButton(
-                      onPressed: onPressed,
-                      icon: Icon(
-                        Icons.delete,
-                      ))
+                    onPressed: onPressedDlt,
+                    icon: Icon(
+                      Icons.more_vert,
+                    ),
+                  )
                 ],
               ),
               Row(
@@ -94,7 +114,7 @@ class PostCard extends StatelessWidget {
                 child: Container(
                   height: MediaQuery.of(context).size.height * .50,
                   width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(color: Colors.green),
+                  decoration: BoxDecoration(color: Colors.transparent),
                   child: Image.network(
                     imageURL,
                     loadingBuilder: (context, child, loadingProgress) {
@@ -112,42 +132,63 @@ class PostCard extends StatelessWidget {
                 ),
               ),
               Container(
-                  color: Colors.blue,
-                  height: MediaQuery.of(context).size.height * .084,
-                  width: MediaQuery.of(context).size.width,
-                  child: Center(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
-                          children: [
-                            // like
-                            Icon(
-                              Icons.favorite_outline,
-                              size: 35,
-                            ),
+                color: Colors.transparent,
+                height: MediaQuery.of(context).size.height * .084,
+                width: MediaQuery.of(context).size.width,
+                child: Center(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // like
+                          LikeButton(
+                              isLiked: isLiked,
+                              onTap: () {
+                                postLikeProvider.toggleLike(
+                                    postId, currentUser.email!, isLiked);
+                              }),
 
-                            // like count
-                            Text('10'),
-                          ],
-                        ),
-                        const SizedBox(width: 10),
-                        Column(
-                          children: [
-                            // comments
-                            Icon(
+                          // like count
+                          Text(
+                            likes.length.toString(),
+                            style: TextStyle(
+                              color: isDarkMode
+                                  ? Theme.of(context).colorScheme.inversePrimary
+                                  : Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(width: 2),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // comments
+                          IconButton(
+                            icon: Icon(
                               Icons.comment,
-                              size: 35,
+                              color: isDarkMode
+                                  ? Theme.of(context).colorScheme.inversePrimary
+                                  : Theme.of(context).colorScheme.primary,
+                              size: 25,
                             ),
-
-                            // comment count
-                            Text('7'),
-                          ],
-                        )
-                      ],
-                    ),
-                  ))
+                            onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CommentPage(
+                                    postId: postId,
+                                  ),
+                                )),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              )
             ],
           ),
         ],

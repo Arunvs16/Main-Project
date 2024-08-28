@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/theme_provider.dart';
 import 'package:main_project/components/like_button.dart';
+import 'package:main_project/services/firestore.dart';
 import 'package:provider/provider.dart';
 
 class CommentCard extends StatelessWidget {
   final String comment;
+  final String time;
   final String username;
   final String postID;
+  final String cmtId;
   final List<String> likes;
 
   const CommentCard({
@@ -17,12 +20,16 @@ class CommentCard extends StatelessWidget {
     required this.username,
     required this.postID,
     required this.likes,
+    required this.cmtId,
+    required this.time,
   });
 
   @override
   Widget build(BuildContext context) {
     final currentUser = FirebaseAuth.instance.currentUser!;
     final isLiked = likes.contains(currentUser.email);
+    final firestore = Firestore();
+
     final commentDataProvider =
         Provider.of<CommentDataProvider>(context, listen: false);
     bool isDarkMode =
@@ -54,6 +61,16 @@ class CommentCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // time
+                  Text(
+                    time,
+                    style: TextStyle(
+                      color: isDarkMode
+                          ? Theme.of(context).colorScheme.inversePrimary
+                          : Theme.of(context).colorScheme.primary,
+                      fontSize: 10,
+                    ),
+                  ),
                   // Username
                   Text(
                     username,
@@ -61,6 +78,7 @@ class CommentCard extends StatelessWidget {
                       color: isDarkMode
                           ? Theme.of(context).colorScheme.inversePrimary
                           : Theme.of(context).colorScheme.primary,
+                      fontSize: 14,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -86,16 +104,17 @@ class CommentCard extends StatelessWidget {
                     isLiked: isLiked,
                     onTap: () {
                       commentDataProvider.toggleLike(
-                          postID, currentUser.email!, !isLiked);
+                          postID, cmtId, currentUser.email!, !isLiked);
                     },
                   ),
                   // Likes count
                   Text(
                     likes.length.toString(),
                     style: TextStyle(
-                        color: isDarkMode
-                            ? Theme.of(context).colorScheme.inversePrimary
-                            : Theme.of(context).colorScheme.primary),
+                      color: isDarkMode
+                          ? Theme.of(context).colorScheme.inversePrimary
+                          : Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                 ],
               ),

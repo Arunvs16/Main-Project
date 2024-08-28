@@ -5,8 +5,10 @@ import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/theme_provider.dart';
 import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/components/my_text_box.dart';
+import 'package:main_project/pages/auth/auth_page.dart';
 import 'package:main_project/pages/open_post_page.dart';
-import 'package:main_project/utils/edit_profile.dart';
+import 'package:main_project/services/auth_service.dart';
+import 'package:main_project/utils/edit_profile_page.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +21,53 @@ class ProfilePage extends StatelessWidget {
 
   // user
   final currentUser = FirebaseAuth.instance.currentUser!;
+
+  final _auth = AuthService();
+
+  void logOut(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        content: Text(
+          'Do you want to logout of your account?',
+          style: TextStyle(
+              fontSize: 24, color: Theme.of(context).colorScheme.primary),
+        ),
+        actions: [
+          MaterialButton(
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          MaterialButton(
+            child: Text(
+              'Logout',
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+            onPressed: () {
+              _auth.logout().whenComplete(
+                () {
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      PageTransition(
+                        child: AuthPage(),
+                        type: PageTransitionType.bottomToTop,
+                        duration: Durations.long1,
+                      ),
+                      (context) => false);
+                },
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +82,7 @@ class ProfilePage extends StatelessWidget {
         foregroundColor: Theme.of(context).colorScheme.primary,
         backgroundColor: Colors.transparent,
       ),
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Column(
         children: [
           StreamBuilder<DocumentSnapshot>(
@@ -48,6 +97,24 @@ class ProfilePage extends StatelessWidget {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: () => logOut(context),
+                          icon: Icon(Icons.arrow_drop_down),
+                        ),
+                        GestureDetector(
+                          onTap: () => logOut(context),
+                          child: Text(
+                            "@${userData['username']}",
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     // User Profile pic
                     Container(
                       height: 100,
@@ -79,16 +146,17 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 5),
 
                     // username
                     Text(
-                      '@${userData['username']}',
+                      userData['name'],
                       style: TextStyle(
                         fontSize: 25,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
 
                     // Edit profile button
                     Center(
@@ -128,12 +196,12 @@ class ProfilePage extends StatelessWidget {
                     // bio
                     MyTextBox(
                       onTap: () {
-                        userDataProvider.editField(context, "bio");
+                        userDataProvider.editBioField(context, "bio");
                       },
                       bioHeader: "Bio :",
                       bio: userData['bio'],
                       onPressed: () {
-                        userDataProvider.editField(context, "bio");
+                        userDataProvider.editBioField(context, "bio");
                       },
                     ),
                   ],
@@ -159,7 +227,12 @@ class ProfilePage extends StatelessWidget {
           ),
           // my posts
           StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance.collection("Posts").snapshots(),
+            stream: FirebaseFirestore.instance
+                .collection("Posts")
+                .where('email',
+                    isEqualTo: _auth
+                        .getCurrentUserEmail()) // Filter by current user's UID
+                .snapshots(),
             builder: (context, snapshot) {
               // show errors
               if (snapshot.hasError) {
@@ -177,7 +250,15 @@ class ProfilePage extends StatelessWidget {
               final posts = snapshot.data!.docs;
               // no data
               if (snapshot.data == null || posts.isEmpty) {
-                return Container();
+                return Container(
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  child: Text(
+                    'No uploads yet.',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                );
               }
               // return as a Grid view
               return GridView.builder(

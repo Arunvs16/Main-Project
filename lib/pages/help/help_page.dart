@@ -12,7 +12,7 @@ class HelpPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         title: Text("Help"),
       ),
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Column(
         children: [
           // terms of services

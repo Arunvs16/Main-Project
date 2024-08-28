@@ -15,12 +15,13 @@ class UserDataProvider with ChangeNotifier {
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection("Users");
 
-  Future<void> editField(BuildContext context, String field) async {
+  Future<void> editBioField(BuildContext context, String field) async {
     String newValue = "";
     bool isDarkMode =
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
     bool saveClicked = false; // Flag to check if save button is clicked
 
+    // Bio----------------------------------------------------------------------
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -105,33 +106,78 @@ class UserDataProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  // username
+  Future<void> editUsernameField(String newValue, String field) async {
+    if (newValue.isNotEmpty) {
+      await firestore.collection("Users").doc(currentUser.uid).update({
+        field: newValue,
+      });
+      notifyListeners();
+    }
+  }
+
+  // name
+  Future<void> editNameField(String newValue, String field) async {
+    if (newValue.isNotEmpty) {
+      await firestore.collection("Users").doc(currentUser.uid).update({
+        field: newValue,
+      });
+      notifyListeners();
+    }
+  }
 }
 
 class CommentDataProvider with ChangeNotifier {
-  final CollectionReference commentsCollection =
-      FirebaseFirestore.instance.collection("comments");
+  // COMMENTS-------------------------------------------------------------------
+  final _firestore = FirebaseFirestore.instance;
+  //  get post & comment info -----------------------------------------------------
+  Future<Map<String, dynamic>> getPostAndCommentData(String postId) async {
+    try {
+      var postRef = _firestore.collection("Posts").doc(postId);
+      var cmtRef = postRef
+          .collection("Comments")
+          .orderBy('TimeStamp', descending: true)
+          .get();
 
-  // Stream to get ordered comments from Firestore
-  Stream<QuerySnapshot> get orderedDataStream {
-    return commentsCollection
-        .orderBy('Timestamp', descending: true)
-        .snapshots();
+      // Get both user data and post data in parallel
+      DocumentSnapshot postSnapshot = await postRef.get();
+      QuerySnapshot cmtSnapshot = await cmtRef;
+
+      var postData = postSnapshot.data();
+      var cmtData = cmtSnapshot.docs; // This is a list of QueryDocumentSnapshot
+
+      return {
+        'postData': postData,
+        'cmtData': cmtData,
+      };
+    } catch (e) {
+      throw Exception("Error fetching data: $e");
+    }
   }
 
-  // Method to post a new comment
-  void postComment(String comment, String username) {
-    commentsCollection.add({
-      'username': username,
-      'comment': comment,
-      'likes': [],
-      'Timestamp': Timestamp.now(),
-    });
-    notifyListeners();
+  // save comments to firetore
+  Future<void> postCommentToFirestore(
+      {required String postId, required dynamic data}) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection("Posts")
+          .doc(postId)
+          .collection("Comments")
+          .add(data);
+      notifyListeners();
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   // Method to like or unlike a comment
-  Future<void> toggleLike(String postId, String userEmail, bool isLiked) async {
-    DocumentReference postRef = commentsCollection.doc(postId);
+  Future<void> toggleLike(
+      String postId, String cmtId, String userEmail, bool isLiked) async {
+    final CollectionReference commentCollection =
+        _firestore.collection("Posts").doc(postId).collection("Comments");
+
+    DocumentReference postRef = commentCollection.doc(cmtId);
 
     if (isLiked) {
       await postRef.update({
@@ -148,17 +194,15 @@ class CommentDataProvider with ChangeNotifier {
 
 class PostLikeProvider extends ChangeNotifier {
   final CollectionReference likeCollection =
-      FirebaseFirestore.instance.collection("post");
+      FirebaseFirestore.instance.collection("Posts");
 
   // Stream to get ordered likes from Firestore
   Stream<QuerySnapshot> get orderedDataStream {
     return likeCollection.orderBy('Timestamp', descending: true).snapshots();
   }
 
-  void postLike(String message, String username) {
+  void postLike() {
     likeCollection.add({
-      'username': username,
-      'message': message,
       'likes': [],
       'Timestamp': Timestamp.now(),
     });

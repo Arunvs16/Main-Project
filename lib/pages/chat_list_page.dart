@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/components/user_tile.dart';
 import 'package:main_project/pages/chat_page.dart';
@@ -11,7 +10,6 @@ class ChatListPage extends StatelessWidget {
   // chat service and auth
   final ChatService _chatService = ChatService();
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +18,7 @@ class ChatListPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         title: Text("Chats"),
       ),
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: _buildUserList(),
     );
   }

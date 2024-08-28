@@ -27,7 +27,7 @@ class MyDrawer extends StatelessWidget {
         if (snapshot.hasData) {
           var userData = snapshot.data!.data() as Map<String, dynamic>;
           return Drawer(
-            backgroundColor: Theme.of(context).colorScheme.background,
+            backgroundColor: Theme.of(context).colorScheme.surface,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -94,16 +94,16 @@ class MyDrawer extends StatelessWidget {
                     // home list tile
                     MyListTile(
                       onTap: () {
-                        Navigator.pushNamed(context, '/comments');
+                        Navigator.pop(context);
                       },
                       horizontal: 25,
                       vertical: 0,
                       leading: Icon(
-                        Icons.comment,
+                        Icons.home,
                         color: Theme.of(context).colorScheme.primary,
                       ),
-                      titleText: "Comments",
-                      subTitleText: "Go to Comments",
+                      titleText: "Home",
+                      subTitleText: "Go back to Home Page",
                       color1: Theme.of(context).colorScheme.primary,
                       color2: Theme.of(context).colorScheme.primary,
                     ),

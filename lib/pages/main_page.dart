@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/pages_provider.dart';
 import 'package:main_project/components/bottom_nav_bar.dart';

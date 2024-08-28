@@ -11,7 +11,7 @@ class PrivacyPolicyPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         title: Text("Privacy Policy"),
       ),
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
     );
   }
 }

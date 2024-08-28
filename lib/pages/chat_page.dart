@@ -42,6 +42,7 @@ class ChatPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         foregroundColor: Theme.of(context).colorScheme.primary,
         backgroundColor: Colors.transparent,
@@ -67,7 +68,6 @@ class ChatPage extends StatelessWidget {
           title: Text(receiverEmail),
         ),
       ),
-      backgroundColor: Theme.of(context).colorScheme.background,
       body: Column(
         children: [
           // display all the messages

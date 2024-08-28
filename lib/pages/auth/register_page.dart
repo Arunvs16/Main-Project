@@ -1,11 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:main_project/admin_panel/login_page.dart';
 import 'package:main_project/components/google_button.dart';
 import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/components/my_button.dart';
 import 'package:main_project/components/my_text_field.dart';
 import 'package:main_project/services/auth_service.dart';
 import 'package:main_project/services/firestore.dart';
+import 'package:page_transition/page_transition.dart';
 
 class RegisterPage extends StatelessWidget {
   final Function()? onTap;
@@ -69,7 +71,7 @@ class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -162,6 +164,31 @@ class RegisterPage extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 30),
+              Divider(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              const SizedBox(height: 30),
+
+              // Login as Admin
+              MaterialButton(
+                color: Theme.of(context).colorScheme.primary,
+                child: Text(
+                  'Login as Admin',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    PageTransition(
+                      child: AdminLoginPage(onTap: onTap),
+                      type: PageTransitionType.rightToLeft,
+                    ),
+                  );
+                },
               ),
             ],
           ),

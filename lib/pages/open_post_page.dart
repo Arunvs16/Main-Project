@@ -22,10 +22,10 @@ class OpenPostPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         title: Text("Posts"),
       ),
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: // my posts
           FutureBuilder<Map<String, dynamic>>(
-        future: _firestore.getUserAndPostData(user.uid),
+        future: _firestore.getCurrentUserAndPostData(user.uid),
         builder: (context, snapshot) {
           // show errors
           if (snapshot.hasError) {
@@ -70,11 +70,13 @@ class OpenPostPage extends StatelessWidget {
 
               // return as a container
               return PostCard(
-                username: "@${userData['username']}",
+                username: "@${post['username']}",
                 caption: caption,
                 timeAgo: timeAgo,
                 imageURL: imageUrl,
-                onPressed: () {
+                postId: post.id,
+                likes: ['likes'],
+                onPressedDlt: () {
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(

@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:main_project/Providers/authentication.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/components/my_list_tile.dart';
@@ -32,7 +31,7 @@ class SettingsPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         title: Text("Settings"),
       ),
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection("Users")

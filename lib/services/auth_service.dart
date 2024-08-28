@@ -9,6 +9,7 @@ class AuthService {
   User? getCurrentUser() => _auth.currentUser;
   String getCurrentUserUid() => _auth.currentUser!.uid;
   String getCurrentUserEmail() => _auth.currentUser!.email.toString();
+  String getCurrentUserUsername() => _auth.currentUser!.displayName.toString();
 
   // login
   Future<UserCredential> loginEmailPassword(String email, password) async {

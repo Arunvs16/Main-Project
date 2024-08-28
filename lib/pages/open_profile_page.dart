@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/theme_provider.dart';
 import 'package:main_project/components/helper_function.dart';
-import 'package:main_project/components/my_text_box.dart';
 import 'package:main_project/pages/open_post_page.dart';
+import 'package:main_project/services/auth_service.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
@@ -15,6 +15,8 @@ class ProfilePage extends StatelessWidget {
   // user
   final currentUser = FirebaseAuth.instance.currentUser!;
 
+  final _auth = AuthService();
+
   @override
   Widget build(BuildContext context) {
     final userDataProvider = Provider.of<UserDataProvider>(context);
@@ -22,6 +24,7 @@ class ProfilePage extends StatelessWidget {
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         foregroundColor: Theme.of(context).colorScheme.primary,
         backgroundColor: Colors.transparent,
@@ -184,9 +187,10 @@ class ProfilePage extends StatelessWidget {
             // my posts
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
-                  .collection("Users")
-                  .doc(currentUser.uid)
                   .collection("Posts")
+                  .where('email',
+                      isEqualTo: _auth
+                          .getCurrentUserEmail()) // Filter by current user's UID
                   .snapshots(),
               builder: (context, snapshot) {
                 // show errors
@@ -205,7 +209,15 @@ class ProfilePage extends StatelessWidget {
                 final posts = snapshot.data!.docs;
                 // no data
                 if (snapshot.data == null || posts.isEmpty) {
-                  return Container();
+                  return Container(
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    child: Text(
+                      'No uploads yet.',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  );
                 }
                 // return as a Grid view
                 return GridView.builder(
@@ -221,7 +233,7 @@ class ProfilePage extends StatelessWidget {
                     // get each individual post
                     final post = posts[index];
                     // get data from each post
-                    String imageUrl = post['imageUrl'];
+                    String imageUrl = post['imageURL'];
 
                     // return as a container
                     return InkWell(

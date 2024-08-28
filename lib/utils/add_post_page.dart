@@ -4,9 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:main_project/Providers/user_provider.dart';
 import 'package:main_project/model/post.dart';
 import 'package:main_project/model/user.dart';
-import 'package:main_project/services/auth_service.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class AddPostToFeed extends StatelessWidget {
@@ -17,18 +18,14 @@ class AddPostToFeed extends StatelessWidget {
     super.key,
     required this.image,
   });
-
   final TextEditingController captionController = TextEditingController();
 
   final _firestore = FirebaseFirestore.instance;
-
-  // final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<void> uploadImageAndCaption(BuildContext context) async {
     String postId = Uuid().v1();
     try {
       isLoading.value = true;
-
       // Check if the user is authenticated
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) {
@@ -46,7 +43,6 @@ class AddPostToFeed extends StatelessWidget {
         isLoading.value = false;
         return;
       }
-
       // Create a unique file name for the image
       String fileName = DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -56,7 +52,6 @@ class AddPostToFeed extends StatelessWidget {
           .ref()
           .child('images/$fileName.jpg')
           .putFile(imageFile);
-
       TaskSnapshot taskSnapshot = await uploadTask;
 
       // Get the download URL of the uploaded image
@@ -65,15 +60,17 @@ class AddPostToFeed extends StatelessWidget {
       // Save the image URL and caption to Firestore
       final Timestamp timestamp = Timestamp.now();
 
-      final AuthService _user = AuthService();
+      UserProfile? _user =
+          Provider.of<UserProvider>(context, listen: false).userModel;
 
       PostData post = PostData(
-        email: _user.getCurrentUserEmail(),
+        email: user.email.toString(),
+        username: user.displayName.toString(),
         caption: captionController.text,
         postID: postId,
         imageURL: downloadUrl,
         timestamp: timestamp,
-        like: [],
+        likes: [],
       );
       // convert user into a map so that we can store in firestore
       final postMap = post.toMap();
@@ -94,6 +91,7 @@ class AddPostToFeed extends StatelessWidget {
         ),
       );
       print('Image uploaded successfully!');
+      Navigator.pop(context);
 
       // Clear the caption controller
       captionController.clear();
@@ -105,6 +103,9 @@ class AddPostToFeed extends StatelessWidget {
           content: Text(
             'Error uploading image: $e',
             textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.inversePrimary,
+            ),
           ),
         ),
       );
@@ -116,6 +117,7 @@ class AddPostToFeed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         foregroundColor: Theme.of(context).colorScheme.primary,
         backgroundColor: Colors.transparent,
@@ -125,9 +127,7 @@ class AddPostToFeed extends StatelessWidget {
             padding: const EdgeInsets.only(right: 16.0),
             child: GestureDetector(
               onTap: () {
-                uploadImageAndCaption(context).whenComplete(() {
-                  Navigator.pop(context);
-                });
+                uploadImageAndCaption(context);
               },
               child: ValueListenableBuilder<bool>(
                 valueListenable: isLoading,
@@ -139,8 +139,9 @@ class AddPostToFeed extends StatelessWidget {
                       : Text(
                           'Upload',
                           style: TextStyle(
-                              color: Theme.of(context).colorScheme.surface,
-                              fontWeight: FontWeight.bold),
+                            color: Theme.of(context).colorScheme.surface,
+                            fontWeight: FontWeight.bold,
+                          ),
                         );
                 },
               ),
@@ -148,7 +149,6 @@ class AddPostToFeed extends StatelessWidget {
           ),
         ],
       ),
-      backgroundColor: Theme.of(context).colorScheme.background,
       body: SingleChildScrollView(
         child: Center(
           child: Column(

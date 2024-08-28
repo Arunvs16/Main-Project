@@ -11,7 +11,7 @@ class AppInfoPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         title: Text("App Info"),
       ),
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
     );
   }
 }

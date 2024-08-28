@@ -17,12 +17,14 @@ class LikeButton extends StatelessWidget {
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
     return GestureDetector(
       onTap: onTap,
-      child: Icon(isLiked ? Icons.favorite : Icons.favorite_border,
-          color: isLiked
-              ? Theme.of(context).colorScheme.error
-              : isDarkMode
-                  ? Theme.of(context).colorScheme.inversePrimary
-                  : Theme.of(context).colorScheme.primary),
+      child: Icon(
+        isLiked ? Icons.favorite : Icons.favorite_border,
+        color: isLiked
+            ? Theme.of(context).colorScheme.error
+            : isDarkMode
+                ? Theme.of(context).colorScheme.inversePrimary
+                : Theme.of(context).colorScheme.primary,
+      ),
     );
   }
 }

@@ -18,7 +18,7 @@ class ChatBubbles extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: isCurrentUser
-            ? Theme.of(context).colorScheme.surface
+            ? Theme.of(context).colorScheme.onPrimary
             : isDarkMode
                 ? Theme.of(context).colorScheme.secondary
                 : Theme.of(context).colorScheme.tertiary,

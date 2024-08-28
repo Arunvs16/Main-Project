@@ -37,7 +37,9 @@ class AdminLoginPage extends StatelessWidget {
       Navigator.pushAndRemoveUntil(
         context,
         PageTransition(
-            child: AdminMainPage(), type: PageTransitionType.rightToLeft),
+          child: AdminMainPage(),
+          type: PageTransitionType.rightToLeft,
+        ),
         (route) => false,
       );
     } catch (e) {
@@ -60,7 +62,7 @@ class AdminLoginPage extends StatelessWidget {
       appBar: AppBar(
         foregroundColor: Theme.of(context).colorScheme.primary,
         backgroundColor: Colors.transparent,
-        title: Text("Admin"),
+        title: Text("Admin Login"),
         centerTitle: true,
       ),
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -76,7 +78,7 @@ class AdminLoginPage extends StatelessWidget {
                 size: 100,
                 color: isDarkMode
                     ? Theme.of(context).colorScheme.error
-                    : Theme.of(context).colorScheme.inversePrimary,
+                    : Theme.of(context).colorScheme.onPrimary,
               ),
 
               const SizedBox(height: 30),

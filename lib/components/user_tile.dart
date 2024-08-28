@@ -45,7 +45,7 @@ class UserTile extends StatelessWidget {
       color1: isDarkMode
           ? Theme.of(context).colorScheme.inversePrimary
           : Theme.of(context).colorScheme.primary,
-      color2: Theme.of(context).colorScheme.surface,
+      color2: Theme.of(context).colorScheme.onPrimary,
     );
   }
 }
