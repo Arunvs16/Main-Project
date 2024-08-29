@@ -7,11 +7,11 @@ import 'package:main_project/pages/comment_page.dart';
 import 'package:provider/provider.dart';
 
 class PostCard extends StatelessWidget {
-  String timeAgo, caption, imageURL, username, postId;
+  final String timeAgo, caption, imageURL, username, postId;
   final List<String> likes;
 
   final void Function()? onPressedDlt;
-  PostCard({
+  const PostCard({
     super.key,
     required this.caption,
     required this.username,

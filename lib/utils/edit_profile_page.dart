@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/theme_provider.dart';
-import 'package:main_project/components/my_text_field.dart';
 import 'package:provider/provider.dart';
 
 class EditProfile extends StatelessWidget {
@@ -33,7 +32,7 @@ class EditProfile extends StatelessWidget {
     bool isDarkMode =
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         foregroundColor: Theme.of(context).colorScheme.primary,
@@ -52,7 +51,7 @@ class EditProfile extends StatelessWidget {
             },
             icon: Icon(
               Icons.done,
-              color: Theme.of(context).colorScheme.surface,
+              color: Theme.of(context).colorScheme.onPrimary,
               size: 30,
             ),
           )

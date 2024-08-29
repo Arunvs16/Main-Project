@@ -81,7 +81,7 @@ class AddPostToFeed extends StatelessWidget {
       // Show a success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: Theme.of(context).colorScheme.surface,
+          backgroundColor: Theme.of(context).colorScheme.onPrimary,
           content: Text(
             'Image uploaded successfully!',
             textAlign: TextAlign.center,
@@ -117,7 +117,7 @@ class AddPostToFeed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         foregroundColor: Theme.of(context).colorScheme.primary,
         backgroundColor: Colors.transparent,
@@ -134,12 +134,12 @@ class AddPostToFeed extends StatelessWidget {
                 builder: (context, value, child) {
                   return value
                       ? CircularProgressIndicator(
-                          color: Theme.of(context).colorScheme.surface,
+                          color: Theme.of(context).colorScheme.onPrimary,
                         )
                       : Text(
                           'Upload',
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.surface,
+                            color: Theme.of(context).colorScheme.onPrimary,
                             fontWeight: FontWeight.bold,
                           ),
                         );

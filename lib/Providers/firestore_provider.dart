@@ -193,13 +193,34 @@ class CommentDataProvider with ChangeNotifier {
 }
 
 class PostLikeProvider extends ChangeNotifier {
+  final _firestore = FirebaseFirestore.instance;
+  Future<Map<String, dynamic>> getUserAndPostData(String uid) async {
+    try {
+      var userRef = _firestore.collection("Users").doc(uid);
+      var postRef = _firestore
+          .collection("Posts")
+          .orderBy('timestamp', descending: true)
+          .get();
+
+      // Get both user data and post data in parallel
+      DocumentSnapshot userSnapshot = await userRef.get();
+      QuerySnapshot postSnapshot = await postRef;
+
+      var userData = userSnapshot.data();
+      var postData =
+          postSnapshot.docs; // This is a list of QueryDocumentSnapshot
+
+      return {
+        'userData': userData,
+        'postData': postData,
+      };
+    } catch (e) {
+      throw Exception("Error fetching data: $e");
+    }
+  }
+
   final CollectionReference likeCollection =
       FirebaseFirestore.instance.collection("Posts");
-
-  // Stream to get ordered likes from Firestore
-  Stream<QuerySnapshot> get orderedDataStream {
-    return likeCollection.orderBy('Timestamp', descending: true).snapshots();
-  }
 
   void postLike() {
     likeCollection.add({
@@ -209,7 +230,7 @@ class PostLikeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Method to like or unlike a comment
+  // Method to like or unlike a post
   Future<void> toggleLike(String postId, String userEmail, bool isLiked) async {
     DocumentReference postRef = likeCollection.doc(postId);
 

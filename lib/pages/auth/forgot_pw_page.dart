@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:main_project/components/my_text_field.dart';
 
 class ForgotPasswordPage extends StatelessWidget {
-  ForgotPasswordPage({Key? key}) : super(key: key);
+  ForgotPasswordPage({super.key});
 
+  // email controller
   final emailController = TextEditingController();
 
   // reset password method

@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/components/my_list_tile.dart';
 import 'package:main_project/Providers/theme_provider.dart';
@@ -22,7 +21,6 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userDataProvider = Provider.of<UserDataProvider>(context);
     bool isDarkMode =
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
     return Scaffold(
@@ -148,8 +146,7 @@ class SettingsPage extends StatelessWidget {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
-                        backgroundColor:
-                            Theme.of(context).colorScheme.background,
+                        backgroundColor: Theme.of(context).colorScheme.surface,
                         content: Text(
                           'Do you want to logout of your account?',
                           style: TextStyle(

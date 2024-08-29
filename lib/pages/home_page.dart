@@ -8,7 +8,6 @@ import 'package:main_project/components/post_card.dart';
 import 'package:main_project/pages/chat_list_page.dart';
 import 'package:main_project/pages/open_profile_page.dart';
 import 'package:main_project/services/auth_service.dart';
-import 'package:main_project/services/firestore.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -24,7 +23,7 @@ class HomePage extends StatelessWidget {
 
   // access firestore
 
-  final _firestore = Firestore();
+  // final _firestore = Firestore();
 
   void postComment(BuildContext context) {
     // if something in your text field
@@ -76,7 +75,7 @@ class HomePage extends StatelessWidget {
   }
 
   //report
-  void _reportOption(BuildContext context) {
+  void _otherOption(BuildContext context) {
     showModalBottomSheet(
       backgroundColor: Theme.of(context).colorScheme.surface,
       context: context,
@@ -103,7 +102,7 @@ class HomePage extends StatelessWidget {
 
             // cancel
             ListTile(
-              leading: Icon(Icons.block),
+              leading: Icon(Icons.cancel),
               title: Text('Cancel'),
               onTap: () {
                 Navigator.pop(context);
@@ -118,7 +117,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String currentUserEmail = AuthService().getCurrentUserEmail();
-
+    final postLikeProvider =
+        Provider.of<PostLikeProvider>(context, listen: false);
     bool isDarkMode =
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
     return Scaffold(
@@ -157,7 +157,7 @@ class HomePage extends StatelessWidget {
         },
       ),
       body: FutureBuilder<Map<String, dynamic>>(
-        future: _firestore.getUserAndPostData(user.uid),
+        future: postLikeProvider.getUserAndPostData(user.uid),
         builder: (context, snapshot) {
           // show errors
           if (snapshot.hasError) {
@@ -219,7 +219,7 @@ class HomePage extends StatelessWidget {
                         if (isOwnPost) {
                           _deleteOptions(context, post.id);
                         } else {
-                          _reportOption(context);
+                          _otherOption(context);
                         }
                       },
                     );

@@ -7,8 +7,11 @@ import 'package:main_project/components/my_list_tile.dart';
 import 'package:provider/provider.dart';
 
 class MyDrawer extends StatelessWidget {
-  void Function()? onTap;
-  MyDrawer({super.key, required this.onTap});
+  final void Function()? onTap;
+  MyDrawer({
+    super.key,
+    required this.onTap,
+  });
 
   // user
   final currentUser = FirebaseAuth.instance.currentUser!;

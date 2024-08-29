@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:main_project/admin_panel/login_page.dart';
+import 'package:main_project/admin_panel/auth/login_page.dart';
 import 'package:main_project/components/google_button.dart';
 import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/components/my_button.dart';

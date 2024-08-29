@@ -18,7 +18,7 @@ class Firestore {
     return UserProfile.fromMap(documentSnapshot);
   }
 
-  // USER PROFILE
+  // USER PROFILE---------------------------------------------------------------
 
   // save user info-------------------------------------------------------------
   Future<void> saveUserInfoInFirestore(
@@ -45,6 +45,8 @@ class Firestore {
     // save user into info in firestore
     await _firestore.collection("Users").doc(uid).set(userMap);
   }
+
+  
 
   //  get user & Post info -----------------------------------------------------
   Future<Map<String, dynamic>> getUserAndPostData(String uid) async {
@@ -101,6 +103,7 @@ class Firestore {
 
   // LIKE-----------------------------------------------------------------------
 
+
   // COMMENTS-------------------------------------------------------------------
   //  get post & comment info -----------------------------------------------------
   Future<Map<String, dynamic>> getPostAndCommentData(String postId) async {
@@ -141,24 +144,6 @@ class Firestore {
     }
   }
 
-  // Method to like or unlike a comment
-  Future<void> toggleLike(
-      String postId, String cmtId, String userEmail, bool isLiked) async {
-    final CollectionReference commentCollection =
-        _firestore.collection("Posts").doc(postId).collection("Comments");
-
-    DocumentReference postRef = commentCollection.doc(cmtId);
-
-    if (isLiked) {
-      await postRef.update({
-        'likes': FieldValue.arrayUnion([userEmail])
-      });
-    } else {
-      await postRef.update({
-        'likes': FieldValue.arrayRemove([userEmail])
-      });
-    }
-  }
-
+  
   // ACCOUNT STUFF
 }

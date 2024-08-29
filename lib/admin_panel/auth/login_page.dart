@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/theme_provider.dart';
-import 'package:main_project/admin_panel/auth_page.dart';
-import 'package:main_project/admin_panel/main_page.dart';
+import 'package:main_project/admin_panel/auth/auth_page.dart';
+import 'package:main_project/admin_panel/pages/main_page.dart';
 import 'package:main_project/components/my_button.dart';
 import 'package:main_project/components/my_text_field.dart';
 import 'package:page_transition/page_transition.dart';

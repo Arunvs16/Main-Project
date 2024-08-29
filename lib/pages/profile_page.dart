@@ -174,18 +174,20 @@ class ProfilePage extends StatelessWidget {
                           height: 30,
                           width: 80,
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(7),
-                              color: Theme.of(context).colorScheme.primary),
+                            borderRadius: BorderRadius.circular(7),
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
                                 "Edit Profile",
                                 style: TextStyle(
-                                    fontSize: 12,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .inversePrimary),
+                                  fontSize: 12,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .inversePrimary,
+                                ),
                               ),
                             ],
                           ),
@@ -207,7 +209,7 @@ class ProfilePage extends StatelessWidget {
                   ],
                 );
               } else if (snapshot.hasError) {
-                displayMessageToUser("Error+ ${snapshot.error}", context);
+                displayMessageToUser("Error ${snapshot.error}", context);
               }
               return Center(
                 child: CircularProgressIndicator(),
@@ -229,9 +231,10 @@ class ProfilePage extends StatelessWidget {
           StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection("Posts")
-                .where('email',
-                    isEqualTo: _auth
-                        .getCurrentUserEmail()) // Filter by current user's UID
+                .where(
+                  'email',
+                  isEqualTo: _auth.getCurrentUserEmail(),
+                ) // Filter by current user's UID
                 .snapshots(),
             builder: (context, snapshot) {
               // show errors
@@ -242,7 +245,7 @@ class ProfilePage extends StatelessWidget {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
                   child: CircularProgressIndicator(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).colorScheme.onPrimary,
                   ),
                 );
               }

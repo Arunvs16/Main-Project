@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
 class MyListTile extends StatelessWidget {
-  void Function()? onTap;
+ final void Function()? onTap;
   // double left;
   // double right;
   // double top;
   // double bottom;
-  double horizontal;
-  double vertical;
-  Widget? leading;
-  String titleText;
-  String subTitleText;
-  Color? color1;
-  Color? color2;
+ final double horizontal;
+ final double vertical;
+ final Widget? leading;
+ final String titleText;
+ final String subTitleText;
+ final Color? color1;
+ final Color? color2;
 
-  MyListTile({
+ const MyListTile({
     super.key,
     required this.onTap,
     required this.horizontal,
