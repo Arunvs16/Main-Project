@@ -21,7 +21,9 @@ void showLoadingCircle(BuildContext context) {
     builder: (context) => AlertDialog(
       backgroundColor: Colors.transparent,
       content: Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
       ),
     ),
   );

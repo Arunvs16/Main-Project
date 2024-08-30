@@ -52,13 +52,13 @@ class _PicImagePageState extends State<PicImagePage> {
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: 'Crop Image',
-          toolbarColor: Theme.of(context).colorScheme.background,
+          toolbarColor: Theme.of(context).colorScheme.surface,
           cropStyle: CropStyle.rectangle,
           activeControlsWidgetColor: Theme.of(context).colorScheme.surface,
-          toolbarWidgetColor: Theme.of(context).colorScheme.surface,
+          toolbarWidgetColor: Theme.of(context).colorScheme.onPrimary,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,
-          backgroundColor: Theme.of(context).colorScheme.background,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           aspectRatioPresets: [
             CropAspectRatioPreset.ratio3x2,
             CropAspectRatioPreset.ratio4x3,
