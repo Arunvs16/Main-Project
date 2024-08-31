@@ -25,7 +25,7 @@ class PostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentUser = FirebaseAuth.instance.currentUser!;
-    final isLiked = likes.contains(currentUser.email);
+    bool isLiked = likes.contains(currentUser.email);
     final postLikeProvider =
         Provider.of<PostLikeProvider>(context, listen: false);
     bool isDarkMode =
@@ -145,11 +145,12 @@ class PostCard extends StatelessWidget {
                         children: [
                           // like
                           LikeButton(
-                              isLiked: isLiked,
-                              onTap: () {
-                                postLikeProvider.toggleLike(
-                                    postId, currentUser.email!, isLiked);
-                              }),
+                            isLiked: isLiked,
+                            onTap: () {
+                              postLikeProvider.toggleLike(
+                                  postId, currentUser.email!, isLiked);
+                            },
+                          ),
 
                           // like count
                           Text(

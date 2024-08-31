@@ -6,7 +6,7 @@ import 'package:main_project/Providers/theme_provider.dart';
 import 'package:main_project/components/my_drawer.dart';
 import 'package:main_project/components/post_card.dart';
 import 'package:main_project/pages/chat_list_page.dart';
-import 'package:main_project/pages/open_profile_page.dart';
+import 'package:main_project/pages/profile_page.dart';
 import 'package:main_project/services/auth_service.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -20,18 +20,6 @@ class HomePage extends StatelessWidget {
 
   // controller
   final postController = TextEditingController();
-
-  // access firestore
-
-  // final _firestore = Firestore();
-
-  void postComment(BuildContext context) {
-    // if something in your text field
-    if (postController.text.isNotEmpty) {
-      Provider.of<PostLikeProvider>(context, listen: false).postLike();
-    }
-    postController.clear();
-  }
 
   // option for delete post
   void _deleteOptions(BuildContext context, String postId) {
@@ -150,65 +138,42 @@ class HomePage extends StatelessWidget {
       drawer: MyDrawer(
         onTap: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ProfilePage(),
-              ));
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProfilePage(),
+            ),
+          );
         },
       ),
-      body: FutureBuilder<Map<String, dynamic>>(
-        future: postLikeProvider.getUserAndPostData(user.uid),
+      body: StreamBuilder<Map<String, dynamic>>(
+        stream: postLikeProvider.getUserAndPostDataStream(user.uid),
         builder: (context, snapshot) {
-          // show errors
           if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                snapshot.error.toString(),
-              ),
-            );
+            return Center(child: Text(snapshot.error.toString()));
           }
-          // show loading circle
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            );
+            return Center(child: CircularProgressIndicator());
           }
-
-          // get user data and posts
           var userData = snapshot.data!['userData'];
           var posts = snapshot.data!['postData'] as List<QueryDocumentSnapshot>;
 
-          // no posts
-          if (posts.isEmpty) {
-            return Center(
-              child: Text('No posts'),
-            );
-          }
-
-          // return as a list
           return Column(
             children: [
-              // Display Posts
               Expanded(
                 child: ListView.builder(
                   itemCount: posts.length,
                   itemBuilder: (context, index) {
-                    // get each individual post
                     final post = posts[index];
-                    // get data from each post
                     String caption = post['caption'];
                     String imageURL = post['imageURL'];
-                    List<String> likes =
-                        List<String>.from(post['likes'] ?? ['']);
+                    String username = post['username'];
+                    List<String> likes = List<String>.from(post['likes'] ?? []);
                     Timestamp timestamp = post['timestamp'];
                     DateTime dateTime = timestamp.toDate();
                     String timeAgo = timeago.format(dateTime);
 
-                    // return as a container
                     return PostCard(
-                      username: "@${post['email']}",
+                      username: "@$username",
                       caption: caption,
                       timeAgo: timeAgo,
                       imageURL: imageURL,
@@ -226,14 +191,14 @@ class HomePage extends StatelessWidget {
                   },
                 ),
               ),
-              // Display User Info
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surface),
+                      color: Theme.of(context).colorScheme.surface,
+                    ),
                     child: Center(
                       child: Text(
                         "@${userData['username']}",

@@ -5,15 +5,12 @@ import 'package:main_project/pages/home_page.dart';
 import 'package:main_project/pages/pick_image_page.dart';
 import 'package:main_project/pages/profile_page.dart';
 import 'package:main_project/pages/search_page.dart';
-import 'package:main_project/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
 class MainPage extends StatelessWidget {
-  MainPage({super.key});
+  const MainPage({super.key});
 
 // access auth
-
-  final _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +18,7 @@ class MainPage extends StatelessWidget {
       HomePage(),
       SearchPage(),
       PicImagePage(),
-      ProfilePage(
-        uid: _auth.getCurrentUserUid(),
-      ),
+      ProfilePage(),
     ];
     final pagesProvider = Provider.of<PagesProvider>(context);
     return Scaffold(

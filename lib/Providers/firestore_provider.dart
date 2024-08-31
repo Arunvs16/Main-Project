@@ -129,45 +129,47 @@ class UserDataProvider with ChangeNotifier {
 }
 
 class CommentDataProvider with ChangeNotifier {
-  // COMMENTS-------------------------------------------------------------------
   final _firestore = FirebaseFirestore.instance;
-  //  get post & comment info -----------------------------------------------------
-  Future<Map<String, dynamic>> getPostAndCommentData(String postId) async {
+
+  // Stream to get post & comment info
+  Stream<Map<String, dynamic>> getPostAndCommentData(String postId) {
     try {
       var postRef = _firestore.collection("Posts").doc(postId);
-      var cmtRef = postRef
-          .collection("Comments")
-          .orderBy('TimeStamp', descending: true)
-          .get();
+      var cmtRef =
+          postRef.collection("Comments").orderBy('TimeStamp', descending: true);
 
-      // Get both user data and post data in parallel
-      DocumentSnapshot postSnapshot = await postRef.get();
-      QuerySnapshot cmtSnapshot = await cmtRef;
+      // Stream both post data and comments
+      return postRef.snapshots().asyncMap((postSnapshot) async {
+        var cmtSnapshot = await cmtRef.get();
+        var postData = postSnapshot.data();
+        var cmtData =
+            cmtSnapshot.docs; // This is a list of QueryDocumentSnapshot
 
-      var postData = postSnapshot.data();
-      var cmtData = cmtSnapshot.docs; // This is a list of QueryDocumentSnapshot
-
-      return {
-        'postData': postData,
-        'cmtData': cmtData,
-      };
+        return {
+          'postData': postData,
+          'cmtData': cmtData,
+        };
+      });
     } catch (e) {
-      throw Exception("Error fetching data: $e");
+      print("Error fetching data: $e");
+      return Stream.error("Error fetching data: $e");
     }
   }
 
-  // save comments to firetore
-  Future<void> postCommentToFirestore(
-      {required String postId, required dynamic data}) async {
+  // Save comments to Firestore
+  Future<void> postCommentToFirestore({
+    required String postId,
+    required dynamic data,
+  }) async {
     try {
-      await FirebaseFirestore.instance
+      await _firestore
           .collection("Posts")
           .doc(postId)
           .collection("Comments")
           .add(data);
       notifyListeners();
     } catch (e) {
-      print(e.toString());
+      print("Error posting comment: ${e.toString()}");
     }
   }
 
@@ -179,90 +181,68 @@ class CommentDataProvider with ChangeNotifier {
 
     DocumentReference postRef = commentCollection.doc(cmtId);
 
-    if (isLiked) {
-      await postRef.update({
-        'likes': FieldValue.arrayUnion([userEmail])
-      });
-    } else {
-      await postRef.update({
-        'likes': FieldValue.arrayRemove([userEmail])
-      });
+    try {
+      if (isLiked) {
+        await postRef.update({
+          'likes': FieldValue.arrayUnion([userEmail])
+        });
+      } else {
+        await postRef.update({
+          'likes': FieldValue.arrayRemove([userEmail])
+        });
+      }
+      notifyListeners();
+    } catch (e) {
+      print("Error toggling like: ${e.toString()}");
     }
-    notifyListeners();
   }
 }
 
 class PostLikeProvider extends ChangeNotifier {
-  final _firestore = FirebaseFirestore.instance;
-  Future<Map<String, dynamic>> getUserAndPostData(String uid) async {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Stream to get user and post data in real-time
+  Stream<Map<String, dynamic>> getUserAndPostDataStream(String uid) {
     try {
       var userRef = _firestore.collection("Users").doc(uid);
-      var postRef = _firestore
-          .collection("Posts")
-          .orderBy('timestamp', descending: true)
-          .get();
+      var postRef =
+          _firestore.collection("Posts").orderBy('timestamp', descending: true);
+      // Stream both user and post datas
+      return userRef.snapshots().asyncMap((userSnapshot) async {
+        var postSnapShot = await postRef.get();
+        var userData = userSnapshot.data();
+        var postData = postSnapShot.docs;
 
-      // Get both user data and post data in parallel
-      DocumentSnapshot userSnapshot = await userRef.get();
-      QuerySnapshot postSnapshot = await postRef;
-
-      var userData = userSnapshot.data();
-      var postData =
-          postSnapshot.docs; // This is a list of QueryDocumentSnapshot
-
-      return {
-        'userData': userData,
-        'postData': postData,
-      };
+        return {
+          'userData': userData,
+          'postData': postData,
+        };
+      });
     } catch (e) {
-      throw Exception("Error fetching data: $e");
+      return Stream.error("Error fetching data: $e");
     }
-  }
-
-  final CollectionReference likeCollection =
-      FirebaseFirestore.instance.collection("Posts");
-
-  void postLike() {
-    likeCollection.add({
-      'likes': [],
-      'Timestamp': Timestamp.now(),
-    });
-    notifyListeners();
   }
 
   // Method to like or unlike a post
   Future<void> toggleLike(String postId, String userEmail, bool isLiked) async {
-    DocumentReference postRef = likeCollection.doc(postId);
+    final CollectionReference postCollection = _firestore.collection("Posts");
+    DocumentReference postRef = postCollection.doc(postId);
 
-    if (isLiked) {
-      await postRef.update({
-        'likes': FieldValue.arrayUnion([userEmail])
-      });
-    } else {
-      await postRef.update({
-        'likes': FieldValue.arrayRemove([userEmail])
-      });
+    try {
+      if (isLiked) {
+        print("?????????????????????????");
+        await postRef.update({
+          'likes': FieldValue.arrayUnion([userEmail])
+        });
+        notifyListeners();
+      } else {
+        await postRef.update({
+          'likes': FieldValue.arrayRemove([userEmail])
+        });
+      }
+      notifyListeners();
+    } catch (e) {
+      print("Error toggling like: ${e.toString()}");
     }
-    notifyListeners();
-  }
-}
-
-class FollowFollowing {
-  Future<int> followsNum(String userId) async {
-    QuerySnapshot followersSnapshot = await FirebaseFirestore.instance
-        .collection("Followers")
-        .doc(userId)
-        .collection("userFollowers")
-        .get();
-    return followersSnapshot.docs.length;
-  }
-
-  Future<int> followingNum(String userId) async {
-    QuerySnapshot followingSnapshot = await FirebaseFirestore.instance
-        .collection("Following")
-        .doc(userId)
-        .collection("userFollowing")
-        .get();
-    return followingSnapshot.docs.length;
   }
 }

@@ -33,6 +33,6 @@ class UserProfile {
         'username': username,
         'email': email,
         'bio': bio,
-        'pic': profilePic,
+        'profilePic': profilePic,
       };
 }

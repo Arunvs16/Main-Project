@@ -11,10 +11,12 @@ class Firestore {
 
   // final _authenticaton = AuthService();
 
-  CollectionReference users = FirebaseFirestore.instance.collection('Users');
+  // User details
+  CollectionReference usersRef = FirebaseFirestore.instance.collection('Users');
   getUserDetails() async {
     User currentUser = _auth.currentUser!;
-    DocumentSnapshot documentSnapshot = await users.doc(currentUser.uid).get();
+    DocumentSnapshot documentSnapshot =
+        await usersRef.doc(currentUser.uid).get();
     return UserProfile.fromMap(documentSnapshot);
   }
 
@@ -45,8 +47,6 @@ class Firestore {
     // save user into info in firestore
     await _firestore.collection("Users").doc(uid).set(userMap);
   }
-
-  
 
   //  get user & Post info -----------------------------------------------------
   Future<Map<String, dynamic>> getUserAndPostData(String uid) async {
@@ -103,7 +103,6 @@ class Firestore {
 
   // LIKE-----------------------------------------------------------------------
 
-
   // COMMENTS-------------------------------------------------------------------
   //  get post & comment info -----------------------------------------------------
   Future<Map<String, dynamic>> getPostAndCommentData(String postId) async {
@@ -144,6 +143,5 @@ class Firestore {
     }
   }
 
-  
   // ACCOUNT STUFF
 }

@@ -11,12 +11,11 @@ import 'package:main_project/services/auth_service.dart';
 import 'package:main_project/utils/edit_profile_page.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class ProfilePage extends StatelessWidget {
-  final String uid;
   ProfilePage({
     super.key,
-    required this.uid,
   });
 
   // user
@@ -240,10 +239,9 @@ class ProfilePage extends StatelessWidget {
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection("Posts")
-                  .where(
-                    'email',
-                    isEqualTo: _auth.getCurrentUserEmail(),
-                  ) // Filter by current user's UID
+                  .where('email',
+                      isEqualTo: _auth
+                          .getCurrentUserEmail()) // Filter by current user's email
                   .snapshots(),
               builder: (context, snapshot) {
                 // show errors
@@ -287,6 +285,12 @@ class ProfilePage extends StatelessWidget {
                     final post = posts[index];
                     // get data from each post
                     String imageUrl = post['imageURL'];
+                    String caption = post['caption'];
+                    String username = post['username'];
+                    List<String> likes = List<String>.from(post['likes'] ?? []);
+                    Timestamp timestamp = post['timestamp'];
+                    DateTime dateTime = timestamp.toDate();
+                    String timeAgo = timeago.format(dateTime);
 
                     // return as a container
                     return InkWell(
@@ -294,7 +298,14 @@ class ProfilePage extends StatelessWidget {
                         Navigator.push(
                           context,
                           PageTransition(
-                            child: OpenPostPage(),
+                            child: OpenPostPage(
+                              username: username,
+                              imageUrl: imageUrl,
+                              caption: caption,
+                              likes: likes,
+                              timestamp: timestamp,
+                              postId: post.id,
+                            ),
                             type: PageTransitionType.fade,
                           ),
                         );
@@ -321,7 +332,7 @@ class ProfilePage extends StatelessWidget {
                             );
                           },
                           imageUrl,
-                          fit: BoxFit.fill,
+                          fit: BoxFit.fitWidth,
                         ),
                       ),
                     );

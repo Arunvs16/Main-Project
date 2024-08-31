@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/theme_provider.dart';
-import 'package:main_project/services/firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:main_project/components/comment_card.dart';
 import 'package:main_project/components/my_text_field.dart';
@@ -16,17 +15,18 @@ class CommentPage extends StatelessWidget {
     required this.postId,
   });
 
-  final _firestore = Firestore();
-
   // user
   final currentUser = FirebaseAuth.instance.currentUser!;
 
-  // text controller
   final commentController = TextEditingController();
 
   void postComment(BuildContext context) async {
+    // Access provider with listen: false
+    final commentDataProvider =
+        Provider.of<CommentDataProvider>(context, listen: false);
+
     if (commentController.text.isNotEmpty) {
-      await _firestore.postCommentToFirestore(postId: postId, data: {
+      await commentDataProvider.postCommentToFirestore(postId: postId, data: {
         'username': currentUser.email,
         'comment': commentController.text,
         'likes': [],
@@ -38,11 +38,9 @@ class CommentPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final commentDataProvider =
-        Provider.of<CommentDataProvider>(context, listen: false);
     bool isDarkMode =
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
-
+    final commentDataProvider = Provider.of<CommentDataProvider>(context);
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Theme.of(context).colorScheme.primary,
@@ -55,45 +53,49 @@ class CommentPage extends StatelessWidget {
           children: [
             // comments
             Expanded(
-              child: FutureBuilder<Map<String, dynamic>>(
-                  future: commentDataProvider.getPostAndCommentData(postId),
-                  builder: (context, snapshot) {
-                    // show errors
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Text(
-                          snapshot.error.toString(),
-                        ),
-                      );
-                    }
-                    // show loading circle
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                        child: CircularProgressIndicator(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      );
-                    }
+              child: StreamBuilder<Map<String, dynamic>>(
+                stream: commentDataProvider.getPostAndCommentData(postId),
+                builder: (context, snapshot) {
+                  // Show errors
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        snapshot.error.toString(),
+                      ),
+                    );
+                  }
 
-                    // get post data and comments
+                  // Show loading circle while waiting for data
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    );
+                  }
+
+                  // If snapshot has data
+                  if (snapshot.hasData) {
                     var postData = snapshot.data!['postData'];
                     var comments = snapshot.data!['cmtData']
                         as List<QueryDocumentSnapshot>;
 
-                    // no posts
+                    // No comments
                     if (comments.isEmpty) {
                       return Center(
                         child: Text('No Comments'),
                       );
                     }
+
                     return ListView.builder(
                       itemCount: comments.length,
                       itemBuilder: (context, index) {
-                        // get each individual post
+                        // Get each individual comment
                         final DocumentSnapshot comment = comments[index];
                         Timestamp timestamp = comment['TimeStamp'];
                         DateTime dateTime = timestamp.toDate();
                         String timeAgo = timeago.format(dateTime);
+
                         return CommentCard(
                           time: timeAgo,
                           comment: comment['comment'],
@@ -104,7 +106,14 @@ class CommentPage extends StatelessWidget {
                         );
                       },
                     );
-                  }),
+                  }
+
+                  // Handle case when snapshot has no data
+                  return Center(
+                    child: Text('No Data Available'),
+                  );
+                },
+              ),
             ),
 
             Padding(
@@ -120,7 +129,8 @@ class CommentPage extends StatelessWidget {
                   ),
                   // post icon
                   GestureDetector(
-                    onTap: () => postComment(context),
+                    onTap: () =>
+                        postComment(context), // Use the function correctly
                     child: Container(
                       height: 50,
                       width: 50,

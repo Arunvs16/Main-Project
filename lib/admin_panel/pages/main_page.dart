@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/theme_provider.dart';
+import 'package:main_project/admin_panel/pages/Posts_page.dart';
 import 'package:main_project/admin_panel/pages/users_page.dart';
 import 'package:main_project/pages/auth/auth_page.dart';
 import 'package:main_project/services/auth_service.dart';
@@ -22,7 +24,9 @@ class AdminMainPage extends StatelessWidget {
         content: Text(
           'Do you want to logout of Admin account?',
           style: TextStyle(
-              fontSize: 24, color: Theme.of(context).colorScheme.primary),
+            fontSize: 24,
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
         actions: [
           MaterialButton(
@@ -94,7 +98,8 @@ class AdminMainPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            InkWell(
+            // Users
+            GestureDetector(
               onTap: () {
                 Navigator.push(
                   context,
@@ -127,28 +132,43 @@ class AdminMainPage extends StatelessWidget {
                 ),
               ),
             ),
-            Container(
-              width: 300,
-              height: 100,
-              margin: EdgeInsets.all(25),
-              decoration: BoxDecoration(
-                color: isDarkMode
-                    ? Theme.of(context).colorScheme.secondary
-                    : Theme.of(context).colorScheme.inversePrimary,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(
-                child: Text(
-                  'Posts',
-                  style: TextStyle(
-                    fontSize: 24,
-                    color: isDarkMode
-                        ? Theme.of(context).colorScheme.inversePrimary
-                        : Theme.of(context).colorScheme.primary,
+
+            // Posts
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  PageTransition(
+                    child: PostsPage(),
+                    type: PageTransitionType.rightToLeft,
+                  ),
+                );
+              },
+              child: Container(
+                width: 300,
+                height: 100,
+                margin: EdgeInsets.all(25),
+                decoration: BoxDecoration(
+                  color: isDarkMode
+                      ? Theme.of(context).colorScheme.secondary
+                      : Theme.of(context).colorScheme.inversePrimary,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Text(
+                    'Posts',
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: isDarkMode
+                          ? Theme.of(context).colorScheme.inversePrimary
+                          : Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                 ),
               ),
             ),
+
+            // Comments
             Container(
               width: 300,
               height: 100,
@@ -171,6 +191,8 @@ class AdminMainPage extends StatelessWidget {
                 ),
               ),
             ),
+
+            // Chat
             Container(
               width: 300,
               height: 100,
@@ -190,6 +212,36 @@ class AdminMainPage extends StatelessWidget {
                         ? Theme.of(context).colorScheme.inversePrimary
                         : Theme.of(context).colorScheme.primary,
                   ),
+                ),
+              ),
+            ),
+
+            // dark mode
+            GestureDetector(
+              onTap: () => Provider.of<ThemeProvider>(context, listen: false)
+                  .toggleTheme(),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondary,
+                    borderRadius: BorderRadius.circular(12)),
+                margin: EdgeInsets.symmetric(horizontal: 55),
+                padding: EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // dark mode text
+                    Text("Dark Mode"),
+
+                    //cupertino switch
+                    CupertinoSwitch(
+                      activeColor: Theme.of(context).colorScheme.error,
+                      value: Provider.of<ThemeProvider>(context, listen: false)
+                          .isDarkMode,
+                      onChanged: (value) =>
+                          Provider.of<ThemeProvider>(context, listen: false)
+                              .toggleTheme(),
+                    ),
+                  ],
                 ),
               ),
             ),

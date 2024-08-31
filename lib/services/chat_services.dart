@@ -10,10 +10,17 @@ class ChatService {
   // get user stream
   Stream<List<Map<String, dynamic>>> getUsersStream() {
     final String currentUserId = _auth.currentUser!.uid;
+    String adminEmail = 'admin@gmail.com';
 
-    return _firestore.collection("Users").snapshots().map((snapshot) {
+    return _firestore
+        .collection("Users")
+        .where('email', isNotEqualTo: adminEmail)
+        .snapshots()
+        .map((snapshot) {
       return snapshot.docs
-          .where((doc) => doc.id != currentUserId) // Exclude current user
+          .where(
+            (doc) => doc.id != currentUserId,
+          ) // Exclude current user
           .map((doc) => doc.data())
           .toList();
     });

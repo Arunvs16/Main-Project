@@ -54,7 +54,7 @@ class _PicImagePageState extends State<PicImagePage> {
           toolbarTitle: 'Crop Image',
           toolbarColor: Theme.of(context).colorScheme.surface,
           cropStyle: CropStyle.rectangle,
-          activeControlsWidgetColor: Theme.of(context).colorScheme.surface,
+          activeControlsWidgetColor: Theme.of(context).colorScheme.onPrimary,
           toolbarWidgetColor: Theme.of(context).colorScheme.onPrimary,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false,

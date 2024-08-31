@@ -59,13 +59,13 @@ class AddPostToFeed extends StatelessWidget {
 
       // Save the image URL and caption to Firestore
       final Timestamp timestamp = Timestamp.now();
-
-      UserProfile? _user =
+      await Provider.of<UserProvider>(context, listen: false).getDetails();
+      UserProfile? userProfile =
           Provider.of<UserProvider>(context, listen: false).userModel;
 
       PostData post = PostData(
-        email: user.email.toString(),
-        username: user.displayName.toString(),
+        email: userProfile!.email,
+        username: userProfile.username,
         caption: captionController.text,
         postID: postId,
         imageURL: downloadUrl,
