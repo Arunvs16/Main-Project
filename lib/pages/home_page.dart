@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/theme_provider.dart';
+import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/components/my_drawer.dart';
 import 'package:main_project/components/post_card.dart';
 import 'package:main_project/pages/chat_list_page.dart';
@@ -36,13 +37,12 @@ class HomePage extends StatelessWidget {
               onTap: () {
                 FirebaseFirestore.instance
                     .collection("Posts")
-                    .doc(postId
-                        // add post id
-                        )
+                    .doc(postId)
                     .delete()
                     .whenComplete(
                   () {
-                    Navigator.pop(context);
+                    // pop
+                    close(context);
                   },
                 );
               },
@@ -106,7 +106,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     String currentUserEmail = AuthService().getCurrentUserEmail();
     final postLikeProvider =
-        Provider.of<PostLikeProvider>(context, listen: false);
+        Provider.of<PostAndUserDatasProvider>(context, listen: false);
     bool isDarkMode =
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
     return Scaffold(
@@ -148,14 +148,35 @@ class HomePage extends StatelessWidget {
       body: StreamBuilder<Map<String, dynamic>>(
         stream: postLikeProvider.getUserAndPostDataStream(user.uid),
         builder: (context, snapshot) {
+          // errors
           if (snapshot.hasError) {
             return Center(child: Text(snapshot.error.toString()));
           }
+
+          // loading
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+            );
           }
+
+          // get data
           var userData = snapshot.data!['userData'];
           var posts = snapshot.data!['postData'] as List<QueryDocumentSnapshot>;
+
+          // no post
+          if (posts.isEmpty) {
+            return Center(
+              child: Text(
+                'No Posts',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            );
+          }
 
           return Column(
             children: [
@@ -163,6 +184,7 @@ class HomePage extends StatelessWidget {
                 child: ListView.builder(
                   itemCount: posts.length,
                   itemBuilder: (context, index) {
+                    // exracting data
                     final post = posts[index];
                     String caption = post['caption'];
                     String imageURL = post['imageURL'];

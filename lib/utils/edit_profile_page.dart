@@ -4,11 +4,11 @@ import 'package:main_project/Providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 class EditProfile extends StatelessWidget {
-  // final UserProfile user;
+  final String postId;
 
   EditProfile({
     super.key,
-    // required this.user,
+    required this.postId,
   });
 
   // controller
@@ -20,7 +20,10 @@ class EditProfile extends StatelessWidget {
         Provider.of<UserDataProvider>(context, listen: false);
     if (usernameEditingController.text.isNotEmpty) {
       await userDataProvider.editUsernameField(
-          usernameEditingController.text, "username");
+        usernameEditingController.text,
+        "username",
+        postId,
+      );
     }
     if (nameEditingController.text.isNotEmpty) {
       await userDataProvider.editNameField(nameEditingController.text, "name");

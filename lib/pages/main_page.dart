@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 class MainPage extends StatelessWidget {
   const MainPage({super.key});
 
-// access auth
 
   @override
   Widget build(BuildContext context) {

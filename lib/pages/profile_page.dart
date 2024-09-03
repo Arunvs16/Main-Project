@@ -79,6 +79,8 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final userDataProvider =
         Provider.of<UserDataProvider>(context, listen: false);
+    final postAndUserDatasProvider =
+        Provider.of<PostAndUserDatasProvider>(context, listen: false);
 
     bool isDarkMode =
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
@@ -88,255 +90,290 @@ class ProfilePage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            StreamBuilder<DocumentSnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("Users")
-                  .doc(currentUser.uid)
-                  .snapshots(),
+            StreamBuilder<Map<String, dynamic>>(
+              stream: postAndUserDatasProvider
+                  .getUserAndPostDataStream(currentUser.uid),
               builder: (context, snapshot) {
-                // get user data
+                // errors
+                if (snapshot.hasError) {
+                  displayMessageToUser('Error: ${snapshot.error}', context);
+                }
                 if (snapshot.hasData) {
-                  final userData =
-                      snapshot.data!.data() as Map<String, dynamic>;
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: () => logOut(context),
-                            icon: Icon(Icons.arrow_drop_down),
-                          ),
-                          GestureDetector(
-                            onTap: () => logOut(context),
-                            child: Text(
-                              "@${userData['username']}",
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      // User Profile pic
-                      Container(
-                        height: 100,
-                        width: 100,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                              width: 5,
-                              color: isDarkMode
-                                  ? Theme.of(context).colorScheme.inversePrimary
-                                  : Theme.of(context).colorScheme.primary),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
-                          child: Image(
-                            fit: BoxFit.cover,
-                            image: AssetImage('images/person.jpg'),
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            },
-                            errorBuilder: (context, object, stack) {
-                              return Container(
-                                child: Icon(
-                                  Icons.error_outline,
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 5),
+                  var userData = snapshot.data!['userData'];
+                  var posts =
+                      snapshot.data!['postData'] as List<QueryDocumentSnapshot>;
 
-                      // username
-                      Text(
-                        userData['name'],
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-
-                      // Edit profile button
-                      Center(
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              PageTransition(
-                                child: EditProfile(),
-                                type: PageTransitionType.fade,
-                              ),
-                            );
-                          },
-                          child: Container(
-                            height: 30,
-                            width: 80,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(7),
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                  // displaying the data
+                  return Expanded(
+                    child: ListView.builder(
+                      itemCount: posts.length,
+                      itemBuilder: (context, index) {
+                        // extracting data
+                        final post = posts[index];
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Row(
                               children: [
-                                Text(
-                                  "Edit Profile",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .inversePrimary,
+                                IconButton(
+                                  onPressed: () => logOut(context),
+                                  icon: Icon(Icons.arrow_drop_down),
+                                ),
+                                GestureDetector(
+                                  onTap: () => logOut(context),
+                                  child: Text(
+                                    "@${userData['username']}",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                        ),
-                      ),
+                            // User Profile pic
+                            Container(
+                              height: 100,
+                              width: 100,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                    width: 5,
+                                    color: isDarkMode
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .inversePrimary
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .primary),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(100),
+                                child: Image(
+                                  fit: BoxFit.cover,
+                                  image: AssetImage('images/person.jpg'),
+                                  loadingBuilder:
+                                      (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  },
+                                  errorBuilder: (context, object, stack) {
+                                    return Container(
+                                      child: Icon(
+                                        Icons.error_outline,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 5),
 
-                      // bio
-                      MyTextBox(
-                        onTap: () {
-                          userDataProvider.editBioField(context, "bio");
-                        },
-                        bioHeader: "Bio :",
-                        bio: userData['bio'],
-                        onPressed: () {
-                          userDataProvider.editBioField(context, "bio");
-                        },
-                      ),
-                    ],
+                            // username
+                            Text(
+                              userData['name'],
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+
+                            // Edit profile button
+                            Center(
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    PageTransition(
+                                      child: EditProfile(
+                                        postId: post.id,
+                                      ),
+                                      type: PageTransitionType.fade,
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  height: 30,
+                                  width: 80,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(7),
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Edit Profile",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .inversePrimary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // bio
+                            MyTextBox(
+                              onTap: () {
+                                userDataProvider.editBioField(context, "bio");
+                              },
+                              bioHeader: "Bio :",
+                              bio: userData['bio'],
+                              onPressed: () {
+                                userDataProvider.editBioField(context, "bio");
+                              },
+                            ), // my post header
+                            Container(
+                              padding: EdgeInsets.all(25),
+                              child: Text(
+                                'Uploads',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                            ),
+                            // my posts
+                            StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection("Posts")
+                                  .where('email',
+                                      isEqualTo: _auth
+                                          .getCurrentUserEmail()) // Filter by current user's email
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                // show errors
+                                if (snapshot.hasError) {
+                                  return Center(
+                                      child: Text(snapshot.error.toString()));
+                                }
+                                // show loading circle
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary,
+                                    ),
+                                  );
+                                }
+                                // get all posts
+                                final posts = snapshot.data!.docs;
+                                // no data
+                                if (snapshot.data == null || posts.isEmpty) {
+                                  return Container(
+                                    padding: EdgeInsets.symmetric(vertical: 20),
+                                    child: Text(
+                                      'No uploads yet.',
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      ),
+                                    ),
+                                  );
+                                }
+                                // return as a Grid view
+                                return GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    mainAxisSpacing: 5,
+                                    crossAxisSpacing: 5,
+                                    crossAxisCount: 3,
+                                  ),
+                                  itemCount: posts.length,
+                                  itemBuilder: (context, index) {
+                                    // get each individual post
+                                    final post = posts[index];
+                                    // get data from each post
+                                    String imageUrl = post['imageURL'];
+                                    String caption = post['caption'];
+                                    String username = post['username'];
+                                    List<String> likes =
+                                        List<String>.from(post['likes'] ?? []);
+                                    Timestamp timestamp = post['timestamp'];
+                                    DateTime dateTime = timestamp.toDate();
+                                    String timeAgo = timeago.format(dateTime);
+
+                                    // return as a container
+                                    return InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(
+                                            child: OpenPostPage(
+                                              username: username,
+                                              imageUrl: imageUrl,
+                                              caption: caption,
+                                              likes: likes,
+                                              timestamp: timestamp,
+                                              postId: post.id,
+                                            ),
+                                            type: PageTransitionType.fade,
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary,
+                                        ),
+                                        child: Image.network(
+                                          loadingBuilder: (context, child,
+                                              loadingProgress) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return Center(
+                                              child: CircularProgressIndicator(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onPrimary,
+                                              ),
+                                            );
+                                          },
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                            return Container(
+                                              child: Icon(
+                                                Icons.error_outline,
+                                              ),
+                                            );
+                                          },
+                                          imageUrl,
+                                          fit: BoxFit.fitWidth,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                   );
-                } else if (snapshot.hasError) {
-                  displayMessageToUser("Error ${snapshot.error}", context);
                 }
                 return Center(
                   child: CircularProgressIndicator(
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
-                );
-              },
-            ),
-            // my post header
-            Container(
-              padding: EdgeInsets.all(25),
-              child: Text(
-                'Uploads',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-            ),
-            // my posts
-            StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("Posts")
-                  .where('email',
-                      isEqualTo: _auth
-                          .getCurrentUserEmail()) // Filter by current user's email
-                  .snapshots(),
-              builder: (context, snapshot) {
-                // show errors
-                if (snapshot.hasError) {
-                  return Center(child: Text(snapshot.error.toString()));
-                }
-                // show loading circle
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                  );
-                }
-                // get all posts
-                final posts = snapshot.data!.docs;
-                // no data
-                if (snapshot.data == null || posts.isEmpty) {
-                  return Container(
-                    padding: EdgeInsets.symmetric(vertical: 20),
-                    child: Text(
-                      'No uploads yet.',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                  );
-                }
-                // return as a Grid view
-                return GridView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    mainAxisSpacing: 5,
-                    crossAxisSpacing: 5,
-                    crossAxisCount: 3,
-                  ),
-                  itemCount: posts.length,
-                  itemBuilder: (context, index) {
-                    // get each individual post
-                    final post = posts[index];
-                    // get data from each post
-                    String imageUrl = post['imageURL'];
-                    String caption = post['caption'];
-                    String username = post['username'];
-                    List<String> likes = List<String>.from(post['likes'] ?? []);
-                    Timestamp timestamp = post['timestamp'];
-                    DateTime dateTime = timestamp.toDate();
-                    String timeAgo = timeago.format(dateTime);
-
-                    // return as a container
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            child: OpenPostPage(
-                              username: username,
-                              imageUrl: imageUrl,
-                              caption: caption,
-                              likes: likes,
-                              timestamp: timestamp,
-                              postId: post.id,
-                            ),
-                            type: PageTransitionType.fade,
-                          ),
-                        );
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
-                        child: Image.network(
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(
-                              child: CircularProgressIndicator(
-                                color: Theme.of(context).colorScheme.onPrimary,
-                              ),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              child: Icon(
-                                Icons.error_outline,
-                              ),
-                            );
-                          },
-                          imageUrl,
-                          fit: BoxFit.fitWidth,
-                        ),
-                      ),
-                    );
-                  },
                 );
               },
             ),

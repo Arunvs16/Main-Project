@@ -35,7 +35,7 @@ class RegisterPage extends StatelessWidget {
     //password don't match -> tell user to fix
     if (passwordController.text != confirmPasswordController.text) {
       // pop loading circle
-      hideLoadingCircle(context);
+      close(context);
       // show error message to user
       displayMessageToUser("Passwords don't match", context);
     } else if (passwordController.text == confirmPasswordController.text) {
@@ -54,10 +54,10 @@ class RegisterPage extends StatelessWidget {
             email: emailController.text, name: nameController.text);
 
         // pop loading circle
-        hideLoadingCircle(context);
+        close(context);
       } on FirebaseAuthException catch (error) {
         // pop loading circle
-        hideLoadingCircle(context);
+        close(context);
 
         // display error message
         displayMessageToUser(

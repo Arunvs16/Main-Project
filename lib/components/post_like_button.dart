@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:main_project/Providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
-class LikeButton extends StatelessWidget {
+class PostLikeButton extends StatelessWidget {
   final bool isLiked;
   final void Function()? onTap;
-  const LikeButton({
+  const PostLikeButton({
     super.key,
     required this.isLiked,
     required this.onTap,
@@ -24,6 +24,7 @@ class LikeButton extends StatelessWidget {
             : isDarkMode
                 ? Theme.of(context).colorScheme.inversePrimary
                 : Theme.of(context).colorScheme.primary,
+        size: 30,
       ),
     );
   }

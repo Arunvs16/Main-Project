@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/theme_provider.dart';
+import 'package:main_project/Providers/user_provider.dart';
+import 'package:main_project/model/user.dart';
 import 'package:provider/provider.dart';
 import 'package:main_project/components/comment_card.dart';
 import 'package:main_project/components/my_text_field.dart';
@@ -25,9 +27,13 @@ class CommentPage extends StatelessWidget {
     final commentDataProvider =
         Provider.of<CommentDataProvider>(context, listen: false);
 
+    await Provider.of<UserProvider>(context, listen: false).getDetails();
+    UserProfile? userProfile =
+        Provider.of<UserProvider>(context, listen: false).userModel;
     if (commentController.text.isNotEmpty) {
       await commentDataProvider.postCommentToFirestore(postId: postId, data: {
-        'username': currentUser.email,
+        'username': userProfile!.username,
+        'uid': currentUser.uid,
         'comment': commentController.text,
         'likes': [],
         'TimeStamp': Timestamp.now(),
@@ -151,8 +157,10 @@ class CommentPage extends StatelessWidget {
             ),
             // logged in as
             Text(
-              "Logged in as: ${currentUser.email}",
-              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+              "Logged in with: ${currentUser.email}",
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
             const SizedBox(
               height: 20,

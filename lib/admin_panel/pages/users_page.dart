@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/theme_provider.dart';
-import 'package:main_project/admin_panel/auth/delete_auth.dart';
 import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/components/my_list_tile.dart';
 import 'package:main_project/services/auth_service.dart';
 import 'package:main_project/services/chat_services.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 class UsersPage extends StatelessWidget {
@@ -14,9 +12,9 @@ class UsersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // chat service and auth
-    final ChatService _chatService = ChatService();
+    final ChatService chatService = ChatService();
 
-    final AuthService _auth = AuthService();
+    final AuthService auth = AuthService();
 
     bool isDarkMode =
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
@@ -37,23 +35,35 @@ class UsersPage extends StatelessWidget {
               color: Theme.of(context).colorScheme.secondary,
               child: Text(
                 'Cancel',
-                style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                style: TextStyle(
+                  color: isDarkMode
+                      ? Theme.of(context).colorScheme.inversePrimary
+                      : Theme.of(context).colorScheme.primary,
+                ),
               ),
               onPressed: () {
-                Navigator.pop(context);
+                // pop
+                close(context);
               },
             ),
             MaterialButton(
               color: Theme.of(context).colorScheme.error,
               child: Text(
                 'Delete',
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.secondary),
+                style: TextStyle(
+                  color: isDarkMode
+                      ? Theme.of(context).colorScheme.inversePrimary
+                      : Theme.of(context).colorScheme.primary,
+                ),
               ),
               onPressed: () async {
                 // delete account user
-                await AuthService().deleteUser(userId);
-                Navigator.pop(context);
+                await AuthService().deleteUser(userId).whenComplete(
+                  () {
+                    // pop
+                    close(context);
+                  },
+                );
               },
             ),
           ],
@@ -62,13 +72,14 @@ class UsersPage extends StatelessWidget {
     }
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         foregroundColor: Theme.of(context).colorScheme.primary,
         backgroundColor: Colors.transparent,
         title: Text("All Users"),
       ),
       body: StreamBuilder(
-        stream: _chatService.getUsersStream(),
+        stream: chatService.getUsersStream(),
         builder: (context, snapshot) {
           // error
           if (snapshot.hasError) {
@@ -78,13 +89,15 @@ class UsersPage extends StatelessWidget {
           // loading
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
             );
           }
 
           // no data
           if (snapshot.data == null) {
-            return Text("No data found");
+            return Text("No Users");
           }
 
           // get all data
@@ -96,16 +109,9 @@ class UsersPage extends StatelessWidget {
                 // get individual user
                 final user = users[index];
                 return MyListTile(
-                  onTap: () => Navigator.push(
-                    context,
-                    PageTransition(
-                      child: DeleteAuth(
-                        userId: user['uid'],
-                        username: user['username'],
-                      ),
-                      type: PageTransitionType.rightToLeft,
-                    ),
-                  ),
+                  onTap: () {
+                    deleteUser(context, user['uid']);
+                  },
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(100),
                     child: Image(

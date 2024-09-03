@@ -75,31 +75,39 @@ class Firestore {
   }
 
   // get current user and posts
-  Future<Map<String, dynamic>> getCurrentUserAndPostData(String uid) async {
-    try {
-      var userRef = _firestore.collection("Users").doc(uid);
-      var postRef = _firestore
-          .collection("Posts")
-          .where('email', isEqualTo: _auth.currentUser!.uid)
-          .orderBy('timestamp', descending: true)
-          .get();
+  Stream<Map<String, dynamic>> getCurrentUserAndPostDataStream(String uid) {
+  try {
+    // Reference to user document
+    var userRef = _firestore.collection("Users").doc(uid).snapshots();
 
-      // Get both user data and post data in parallel
-      DocumentSnapshot userSnapshot = await userRef.get();
-      QuerySnapshot postSnapshot = await postRef;
+    // Reference to posts made by the current user, ordered by timestamp
+    var postRef = _firestore
+        .collection("Posts")
+        .where('email', isEqualTo: _auth.currentUser!.email) // Match by email
+        .orderBy('timestamp', descending: true)
+        .snapshots();
 
+    // Combine user and post streams using asyncMap
+    return userRef.asyncMap((userSnapshot) async {
       var userData = userSnapshot.data();
-      var postData =
-          postSnapshot.docs; // This is a list of QueryDocumentSnapshot
+
+      // Wait for the first snapshot of posts
+      var postSnapshot = await postRef.first;
+
+      // Collect post data
+      var postData = postSnapshot.docs;
 
       return {
         'userData': userData,
         'postData': postData,
       };
-    } catch (e) {
-      throw Exception("Error fetching data: $e");
-    }
+    });
+  } catch (e) {
+    // Handle any errors that occur during data fetching
+    throw Exception("Error fetching data: $e");
   }
+}
+
 
   // LIKE-----------------------------------------------------------------------
 

@@ -113,6 +113,7 @@ class AuthService {
       // Delete user data in Firestore
       DocumentReference userDoc = _firestore.collection("Users").doc(uid);
       batch.delete(userDoc);
+      print('User deleted');
 
       // Delete user posts
       QuerySnapshot userPosts = await _firestore
@@ -122,6 +123,7 @@ class AuthService {
 
       for (var post in userPosts.docs) {
         batch.delete(post.reference);
+        print('Post deleted');
       }
 
       // Delete user comments
@@ -132,6 +134,7 @@ class AuthService {
 
       for (var comment in userComments.docs) {
         batch.delete(comment.reference);
+        print('Comment deleted');
       }
 
       // Commit the batch
@@ -141,7 +144,7 @@ class AuthService {
     }
   }
 
-  //---------------------------------------------------------------
+  //----------------------------------------------------------------------------
 
   // Google Sign in
 

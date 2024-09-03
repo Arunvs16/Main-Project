@@ -27,15 +27,20 @@ void main() async {
       providers: [
         // Theme
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+
         // database
         ChangeNotifierProvider(create: (_) => DatabaseProvider()),
+
         // user details
         ChangeNotifierProvider(create: (_) => UserProvider()),
 
+        // stream of user and post data
+        ChangeNotifierProvider(create: (context) => PostAndUserDatasProvider()),
+
+        // toggle page
         ChangeNotifierProvider(create: (_) => AuthPageProvider()),
-        ChangeNotifierProvider(create: (_) => CommentDataProvider()),
-        ChangeNotifierProvider(create: (_) => PostLikeProvider()),
         ChangeNotifierProvider(create: (_) => PagesProvider()),
+        ChangeNotifierProvider(create: (_) => CommentDataProvider()),
         ChangeNotifierProvider(create: (_) => UserDataProvider()),
       ],
       child: const MyApp(),

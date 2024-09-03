@@ -108,9 +108,16 @@ class UserDataProvider with ChangeNotifier {
   }
 
   // username
-  Future<void> editUsernameField(String newValue, String field) async {
+  Future<void> editUsernameField(
+      String newValue, String field, String postId) async {
     if (newValue.isNotEmpty) {
       await firestore.collection("Users").doc(currentUser.uid).update({
+        field: newValue,
+      });
+      notifyListeners();
+    }
+    if (newValue.isNotEmpty) {
+      await firestore.collection("Posts").doc(postId).update({
         field: newValue,
       });
       notifyListeners();
@@ -175,7 +182,11 @@ class CommentDataProvider with ChangeNotifier {
 
   // Method to like or unlike a comment
   Future<void> toggleLike(
-      String postId, String cmtId, String userEmail, bool isLiked) async {
+    String postId,
+    String cmtId,
+    String userEmail,
+    bool isLiked,
+  ) async {
     final CollectionReference commentCollection =
         _firestore.collection("Posts").doc(postId).collection("Comments");
 
@@ -198,7 +209,7 @@ class CommentDataProvider with ChangeNotifier {
   }
 }
 
-class PostLikeProvider extends ChangeNotifier {
+class PostAndUserDatasProvider extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Stream to get user and post data in real-time

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
+import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/components/post_card.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -29,9 +30,18 @@ class PostsPage extends StatelessWidget {
                     .delete()
                     .whenComplete(
                   () {
-                    Navigator.pop(context);
+                    // pop
+                    close(context);
                   },
                 );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.close),
+              title: Text('Cancel'),
+              onTap: () {
+                // pop
+                close(context);
               },
             ),
           ],
@@ -42,42 +52,44 @@ class PostsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final postLikeProvider =
+        Provider.of<PostAndUserDatasProvider>(context, listen: false);
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         foregroundColor: Theme.of(context).colorScheme.primary,
         backgroundColor: Colors.transparent,
         title: Text("All Posts"),
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection("Posts")
-            .orderBy('timestamp', descending: true)
-            .snapshots(),
+      body: StreamBuilder<Map<String, dynamic>>(
+        stream: postLikeProvider.getUserAndPostDataStream(user.uid),
         builder: (context, snapshot) {
-          // Show errors
+          // errors
           if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                snapshot.error.toString(),
-              ),
-            );
+            return Center(child: Text(snapshot.error.toString()));
           }
-          // Show loading circle
+
+          // loading
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
               child: CircularProgressIndicator(
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.onPrimary,
               ),
             );
           }
-
-          // Get posts
-          var posts = snapshot.data!.docs;
-
-          // No posts
+          // get data
+          var userData = snapshot.data!['userData'];
+          var posts = snapshot.data!['postData'] as List<QueryDocumentSnapshot>;
+          
+          // no post
           if (posts.isEmpty) {
             return Center(
-              child: Text('No posts'),
+              child: Text(
+                'No Posts',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
             );
           }
 
@@ -97,7 +109,7 @@ class PostsPage extends StatelessWidget {
 
               // Return as a container
               return PostCard(
-                username: "@${post['email']}",
+                username: "@${post['username']}",
                 caption: caption,
                 timeAgo: timeAgo,
                 imageURL: imageURL,

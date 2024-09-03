@@ -147,28 +147,46 @@ class SettingsPage extends StatelessWidget {
                       context: context,
                       builder: (context) => AlertDialog(
                         backgroundColor: Theme.of(context).colorScheme.surface,
-                        content: Text(
+                        content:
+
+                            // message
+                            Text(
                           'Do you want to logout of your account?',
                           style: TextStyle(
-                              fontSize: 24,
-                              color: Theme.of(context).colorScheme.primary),
+                            fontSize: 24,
+                            color: isDarkMode
+                                ? Theme.of(context).colorScheme.inversePrimary
+                                : Theme.of(context).colorScheme.primary,
+                          ),
                         ),
                         actions: [
+                          // cancel button
                           MaterialButton(
                             child: Text(
                               'Cancel',
                               style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary),
+                                color: isDarkMode
+                                    ? Theme.of(context)
+                                        .colorScheme
+                                        .inversePrimary
+                                    : Theme.of(context).colorScheme.primary,
+                              ),
                             ),
                             onPressed: () {
                               Navigator.pop(context);
                             },
                           ),
+
+                          // logout button
                           MaterialButton(
+                            color: Theme.of(context).colorScheme.error,
                             child: Text(
                               'Logout',
                               style: TextStyle(
-                                  color: Theme.of(context).colorScheme.error),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary,
+                              ),
                             ),
                             onPressed: () {
                               _auth.logout().whenComplete(

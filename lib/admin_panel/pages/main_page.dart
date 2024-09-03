@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:main_project/Providers/theme_provider.dart';
 import 'package:main_project/admin_panel/pages/Posts_page.dart';
 import 'package:main_project/admin_panel/pages/users_page.dart';
+import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/pages/auth/auth_page.dart';
 import 'package:main_project/services/auth_service.dart';
 import 'package:page_transition/page_transition.dart';
@@ -17,31 +18,49 @@ class AdminMainPage extends StatelessWidget {
   final _auth = AuthService();
 
   void logOut(BuildContext context) {
+    bool isDarkMode =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        content: Text(
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        content:
+            // message
+            Text(
           'Do you want to logout of Admin account?',
           style: TextStyle(
             fontSize: 24,
-            color: Theme.of(context).colorScheme.primary,
+            color: isDarkMode
+                ? Theme.of(context).colorScheme.inversePrimary
+                : Theme.of(context).colorScheme.primary,
           ),
         ),
         actions: [
+          // cancel button
           MaterialButton(
+            color: Theme.of(context).colorScheme.surface,
             child: Text(
               'Cancel',
-              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+              style: TextStyle(
+                color: isDarkMode
+                    ? Theme.of(context).colorScheme.inversePrimary
+                    : Theme.of(context).colorScheme.primary,
+              ),
             ),
             onPressed: () {
-              Navigator.pop(context);
+              //pop
+              close(context);
             },
           ),
+
+          // logout button
           MaterialButton(
+            color: Theme.of(context).colorScheme.error,
             child: Text(
               'Logout',
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.inversePrimary,
+              ),
             ),
             onPressed: () {
               _auth.logout().whenComplete(

@@ -30,6 +30,6 @@ void showLoadingCircle(BuildContext context) {
 }
 
 // hide loading circle
-void hideLoadingCircle(BuildContext context) {
+void close(BuildContext context) {
   Navigator.pop(context);
 }

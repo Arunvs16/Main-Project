@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/theme_provider.dart';
-import 'package:main_project/components/like_button.dart';
+import 'package:main_project/components/comment_like_button.dart';
 import 'package:main_project/services/firestore.dart';
 import 'package:provider/provider.dart';
 
@@ -48,19 +48,17 @@ class CommentCard extends StatelessWidget {
           Row(
             children: [
               // Profile pic
-              Container(
-                // margin: EdgeInsets.only(left: 10, top: 10),
-                height: MediaQuery.of(context).size.height * 0.06,
-                width: MediaQuery.of(context).size.height * 0.06,
-                child: CircleAvatar(
-                  backgroundImage: AssetImage('images/person.jpg'),
-                ),
-              ),
-              const SizedBox(width: 20),
-              // Comment and username
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Container(
+                    // margin: EdgeInsets.only(left: 10, top: 10),
+                    height: MediaQuery.of(context).size.height * 0.06,
+                    width: MediaQuery.of(context).size.height * 0.06,
+                    child: CircleAvatar(
+                      backgroundImage: AssetImage('images/person.jpg'),
+                    ),
+                  ),
+                  SizedBox(height: 5),
                   // time
                   Text(
                     time,
@@ -71,9 +69,17 @@ class CommentCard extends StatelessWidget {
                       fontSize: 10,
                     ),
                   ),
+                ],
+              ),
+              const SizedBox(width: 20),
+              // Comment and username
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   // Username
                   Text(
-                    username,
+                    "@$username",
                     style: TextStyle(
                       color: isDarkMode
                           ? Theme.of(context).colorScheme.inversePrimary
@@ -81,7 +87,7 @@ class CommentCard extends StatelessWidget {
                       fontSize: 14,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 10),
                   // Comment
                   Text(
                     comment,
@@ -100,7 +106,7 @@ class CommentCard extends StatelessWidget {
               Column(
                 children: [
                   // Likes
-                  LikeButton(
+                  CommentLikeButton(
                     isLiked: isLiked,
                     onTap: () {
                       commentDataProvider.toggleLike(

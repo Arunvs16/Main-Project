@@ -65,24 +65,23 @@ class MyDrawer extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        "@${userData['username']}",
+                                        "${userData['name']}",
+                                        textAlign: TextAlign.center,
                                         style: TextStyle(
-                                            fontSize: 20,
+                                            fontSize: 16,
                                             color: Theme.of(context)
                                                 .colorScheme
                                                 .primary),
                                       ),
-                                      const SizedBox(
-                                        height: 8,
-                                      ),
-                                      // email id
+                                      const SizedBox(height: 8),
                                       Text(
-                                        currentUser.email.toString(),
+                                        "@${userData['username']}",
+                                        textAlign: TextAlign.center,
                                         style: TextStyle(
+                                            fontSize: 16,
                                             color: Theme.of(context)
                                                 .colorScheme
-                                                .primary,
-                                            fontSize: 16),
+                                                .primary),
                                       ),
                                     ],
                                   ),
@@ -124,7 +123,7 @@ class MyDrawer extends StatelessWidget {
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   titleText: "SETTINGS",
-                  subTitleText: "Dark mode, Profile",
+                  subTitleText: "Dark mode, Help",
                   color1: Theme.of(context).colorScheme.primary,
                   color2: Theme.of(context).colorScheme.primary,
                 ),

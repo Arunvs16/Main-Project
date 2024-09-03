@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/components/my_text_field.dart';
 import 'package:main_project/services/auth_service.dart';
 
@@ -21,7 +22,8 @@ class DeleteAuth extends StatelessWidget {
       await AuthService()
           .deleteUserAuth(emailController.text, passwordController.text)
           .whenComplete(() {
-        Navigator.pop(context);
+        //pop
+        close(context);
       });
     }
   }

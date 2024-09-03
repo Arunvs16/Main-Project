@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
-import 'package:main_project/components/post_card.dart'; // Ensure this path is correct
+import 'package:main_project/Providers/theme_provider.dart';
+import 'package:main_project/components/open_post_image.dart';
 import 'package:main_project/pages/profile_page.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -107,7 +108,10 @@ class OpenPostPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final postLikeProvider =
-        Provider.of<PostLikeProvider>(context, listen: false);
+        Provider.of<PostAndUserDatasProvider>(context, listen: false);
+    bool isDarkMode =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
+    final currentUser = FirebaseAuth.instance.currentUser!;
 
     return Scaffold(
       appBar: AppBar(
@@ -126,13 +130,12 @@ class OpenPostPage extends StatelessWidget {
                 // Display data from the post
                 String timeAgo = timeago.format(timestamp.toDate());
 
-                return PostCard(
-                  username: "@$username", // or you can use userData if needed
+                
+                return OpenPostImage(
                   caption: caption,
+                  username: "@$username",
                   timeAgo: timeAgo,
                   imageURL: imageUrl,
-                  postId: postId,
-                  likes: likes,
                   onPressedDlt: () {
                     bool isOwnPost =
                         user.email == user.email; // Change this as needed
@@ -142,6 +145,7 @@ class OpenPostPage extends StatelessWidget {
                       _otherOption(context);
                     }
                   },
+                  postId: postId,
                 );
               },
             ),

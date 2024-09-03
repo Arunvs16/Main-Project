@@ -32,10 +32,10 @@ class LoginPage extends StatelessWidget {
           emailController.text, passwordController.text);
 
       // pop loading circle
-      hideLoadingCircle(context);
+      close(context);
     } on FirebaseAuthException catch (error) {
       // pop loading circle
-      hideLoadingCircle(context);
+      close(context);
 
       // show error message to user
       displayMessageToUser(error.code, context);

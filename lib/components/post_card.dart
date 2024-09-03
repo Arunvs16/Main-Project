@@ -2,14 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/theme_provider.dart';
-import 'package:main_project/components/like_button.dart';
+import 'package:main_project/components/post_like_button.dart';
 import 'package:main_project/pages/comment_page.dart';
 import 'package:provider/provider.dart';
 
 class PostCard extends StatelessWidget {
   final String timeAgo, caption, imageURL, username, postId;
   final List<String> likes;
-
   final void Function()? onPressedDlt;
   const PostCard({
     super.key,
@@ -27,7 +26,7 @@ class PostCard extends StatelessWidget {
     final currentUser = FirebaseAuth.instance.currentUser!;
     bool isLiked = likes.contains(currentUser.email);
     final postLikeProvider =
-        Provider.of<PostLikeProvider>(context, listen: false);
+        Provider.of<PostAndUserDatasProvider>(context, listen: false);
     bool isDarkMode =
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
 
@@ -39,7 +38,6 @@ class PostCard extends StatelessWidget {
       ),
       height: MediaQuery.of(context).size.height * 0.75,
       child: Column(
-        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -109,7 +107,8 @@ class PostCard extends StatelessWidget {
 
               // image
               Container(
-                height: MediaQuery.of(context).size.height * .55,
+                decoration: BoxDecoration(),
+                height: MediaQuery.of(context).size.height * .57,
                 width: MediaQuery.of(context).size.width,
                 child: Container(
                   height: MediaQuery.of(context).size.height * .50,
@@ -125,6 +124,7 @@ class PostCard extends StatelessWidget {
                     },
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
+                        decoration: BoxDecoration(),
                         child: Icon(Icons.error_outline),
                       );
                     },
@@ -133,35 +133,33 @@ class PostCard extends StatelessWidget {
               ),
               Container(
                 color: Colors.transparent,
-                height: MediaQuery.of(context).size.height * .084,
+                height: MediaQuery.of(context).size.height * .060,
                 width: MediaQuery.of(context).size.width,
                 child: Center(
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // like
-                          LikeButton(
-                            isLiked: isLiked,
-                            onTap: () {
-                              postLikeProvider.toggleLike(
-                                  postId, currentUser.email!, isLiked);
-                            },
-                          ),
-
-                          // like count
-                          Text(
-                            likes.length.toString(),
-                            style: TextStyle(
-                              color: isDarkMode
-                                  ? Theme.of(context).colorScheme.inversePrimary
-                                  : Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                        ],
+                      PostLikeButton(
+                        isLiked: isLiked,
+                        onTap: () {
+                          postLikeProvider.toggleLike(
+                            postId,
+                            currentUser.email!,
+                            isLiked,
+                          );
+                        },
+                      ),
+                      SizedBox(width: 2),
+                      // like count
+                      Text(
+                        likes.length.toString(),
+                        style: TextStyle(
+                          color: isDarkMode
+                              ? Theme.of(context).colorScheme.inversePrimary
+                              : Theme.of(context).colorScheme.primary,
+                          fontSize: 16,
+                        ),
                       ),
                       SizedBox(width: 2),
                       Column(
@@ -177,12 +175,13 @@ class PostCard extends StatelessWidget {
                               size: 25,
                             ),
                             onPressed: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CommentPage(
-                                    postId: postId,
-                                  ),
-                                )),
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CommentPage(
+                                  postId: postId,
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       )
