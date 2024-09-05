@@ -105,7 +105,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String currentUserEmail = AuthService().getCurrentUserEmail();
-    final postLikeProvider =
+    final postAndUserDatasProvider =
         Provider.of<PostAndUserDatasProvider>(context, listen: false);
     bool isDarkMode =
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
@@ -145,8 +145,9 @@ class HomePage extends StatelessWidget {
           );
         },
       ),
+      // displaying all posts
       body: StreamBuilder<Map<String, dynamic>>(
-        stream: postLikeProvider.getUserAndPostDataStream(user.uid),
+        stream: postAndUserDatasProvider.getUserAndPostDataStream(user.uid),
         builder: (context, snapshot) {
           // errors
           if (snapshot.hasError) {

@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
+import 'package:main_project/admin_panel/components/admin_post_card.dart';
 import 'package:main_project/components/helper_function.dart';
-import 'package:main_project/components/post_card.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -52,7 +52,7 @@ class PostsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final postLikeProvider =
+    final postAndUserDatasProvider =
         Provider.of<PostAndUserDatasProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -62,7 +62,7 @@ class PostsPage extends StatelessWidget {
         title: Text("All Posts"),
       ),
       body: StreamBuilder<Map<String, dynamic>>(
-        stream: postLikeProvider.getUserAndPostDataStream(user.uid),
+        stream: postAndUserDatasProvider.getUserAndPostDataStream(user.uid),
         builder: (context, snapshot) {
           // errors
           if (snapshot.hasError) {
@@ -77,49 +77,73 @@ class PostsPage extends StatelessWidget {
               ),
             );
           }
+
           // get data
           var userData = snapshot.data!['userData'];
           var posts = snapshot.data!['postData'] as List<QueryDocumentSnapshot>;
-          
+
           // no post
           if (posts.isEmpty) {
             return Center(
               child: Text(
                 'No Posts',
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
             );
           }
 
-          // Return as a list
-          return ListView.builder(
-            itemCount: posts.length,
-            itemBuilder: (context, index) {
-              // Get each individual post
-              final post = posts[index];
-              // Get data from each post
-              String caption = post['caption'];
-              String imageURL = post['imageURL'];
-              List<String> likes = List<String>.from(post['likes'] ?? []);
-              Timestamp timestamp = post['timestamp'];
-              DateTime dateTime = timestamp.toDate();
-              String timeAgo = timeago.format(dateTime);
+          return Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: posts.length,
+                  itemBuilder: (context, index) {
+                    // exracting data
+                    final post = posts[index];
+                    String caption = post['caption'];
+                    String imageURL = post['imageURL'];
+                    String username = post['username'];
+                    List<String> likes = List<String>.from(post['likes'] ?? []);
+                    Timestamp timestamp = post['timestamp'];
+                    DateTime dateTime = timestamp.toDate();
+                    String timeAgo = timeago.format(dateTime);
 
-              // Return as a container
-              return PostCard(
-                username: "@${post['username']}",
-                caption: caption,
-                timeAgo: timeAgo,
-                imageURL: imageURL,
-                postId: post.id,
-                likes: likes,
-                onPressedDlt: () {
-                  _deletePost(context, post.id);
-                },
-              );
-            },
+                    return AdminPostCard(
+                      username: "@$username",
+                      caption: caption,
+                      timeAgo: timeAgo,
+                      imageURL: imageURL,
+                      postId: post.id,
+                      onPressedDlt: () {
+                        _deletePost(context, post.id);
+                      },
+                    );
+                  },
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                    ),
+                    child: Center(
+                      child: Text(
+                        "@${userData['username']}",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           );
         },
       ),

@@ -64,7 +64,9 @@ class UserDataProvider with ChangeNotifier {
         actions: [
           // Cancel button
           MaterialButton(
-            color: Theme.of(context).colorScheme.secondary,
+            color: isDarkMode
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.secondary,
             onPressed: () => Navigator.pop(context),
             child: Text(
               "Cancel",
@@ -78,7 +80,7 @@ class UserDataProvider with ChangeNotifier {
 
           // Save button
           MaterialButton(
-            color: Theme.of(context).colorScheme.primary,
+            color: Theme.of(context).colorScheme.onPrimary,
             onPressed: () {
               saveClicked = true; // Set the flag when save button is clicked
               Navigator.of(context).pop();
@@ -110,12 +112,14 @@ class UserDataProvider with ChangeNotifier {
   // username
   Future<void> editUsernameField(
       String newValue, String field, String postId) async {
+    // in user collection
     if (newValue.isNotEmpty) {
       await firestore.collection("Users").doc(currentUser.uid).update({
         field: newValue,
       });
       notifyListeners();
     }
+    // in post collection
     if (newValue.isNotEmpty) {
       await firestore.collection("Posts").doc(postId).update({
         field: newValue,
@@ -125,7 +129,8 @@ class UserDataProvider with ChangeNotifier {
   }
 
   // name
-  Future<void> editNameField(String newValue, String field) async {
+  Future<void> editNameField(String newValue, field) async {
+    // in user collection
     if (newValue.isNotEmpty) {
       await firestore.collection("Users").doc(currentUser.uid).update({
         field: newValue,
@@ -135,7 +140,7 @@ class UserDataProvider with ChangeNotifier {
   }
 }
 
-class CommentDataProvider with ChangeNotifier {
+class PostAndCommentDataProvider with ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
 
   // Stream to get post & comment info

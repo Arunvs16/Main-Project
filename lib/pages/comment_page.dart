@@ -25,7 +25,7 @@ class CommentPage extends StatelessWidget {
   void postComment(BuildContext context) async {
     // Access provider with listen: false
     final commentDataProvider =
-        Provider.of<CommentDataProvider>(context, listen: false);
+        Provider.of<PostAndCommentDataProvider>(context, listen: false);
 
     await Provider.of<UserProvider>(context, listen: false).getDetails();
     UserProfile? userProfile =
@@ -46,7 +46,8 @@ class CommentPage extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isDarkMode =
         Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
-    final commentDataProvider = Provider.of<CommentDataProvider>(context);
+    final commentDataProvider =
+        Provider.of<PostAndCommentDataProvider>(context);
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Theme.of(context).colorScheme.primary,

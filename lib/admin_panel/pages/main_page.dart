@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/theme_provider.dart';
 import 'package:main_project/admin_panel/pages/Posts_page.dart';
+import 'package:main_project/admin_panel/pages/posts_for_delete_comments.dart';
 import 'package:main_project/admin_panel/pages/users_page.dart';
+import 'package:main_project/admin_panel/components/collecton_card.dart';
 import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/pages/auth/auth_page.dart';
 import 'package:main_project/services/auth_service.dart';
@@ -66,13 +68,14 @@ class AdminMainPage extends StatelessWidget {
               _auth.logout().whenComplete(
                 () {
                   Navigator.pushAndRemoveUntil(
-                      context,
-                      PageTransition(
-                        child: AuthPage(),
-                        type: PageTransitionType.bottomToTop,
-                        duration: Durations.long1,
-                      ),
-                      (context) => false);
+                    context,
+                    PageTransition(
+                      child: AuthPage(),
+                      type: PageTransitionType.bottomToTop,
+                      duration: Durations.long1,
+                    ),
+                    (context) => false,
+                  );
                 },
               );
             },
@@ -118,7 +121,7 @@ class AdminMainPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             // Users
-            GestureDetector(
+            CollectonCard(
               onTap: () {
                 Navigator.push(
                   context,
@@ -128,32 +131,17 @@ class AdminMainPage extends StatelessWidget {
                   ),
                 );
               },
-              child: Container(
-                width: 300,
-                height: 100,
-                margin: EdgeInsets.all(25),
-                decoration: BoxDecoration(
-                  color: isDarkMode
-                      ? Theme.of(context).colorScheme.secondary
-                      : Theme.of(context).colorScheme.inversePrimary,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Center(
-                  child: Text(
-                    'Users',
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: isDarkMode
-                          ? Theme.of(context).colorScheme.inversePrimary
-                          : Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                ),
-              ),
+              containerColor: isDarkMode
+                  ? Theme.of(context).colorScheme.secondary
+                  : Theme.of(context).colorScheme.inversePrimary,
+              text: 'Users',
+              textColor: isDarkMode
+                  ? Theme.of(context).colorScheme.inversePrimary
+                  : Theme.of(context).colorScheme.primary,
             ),
 
             // Posts
-            GestureDetector(
+            CollectonCard(
               onTap: () {
                 Navigator.push(
                   context,
@@ -163,76 +151,45 @@ class AdminMainPage extends StatelessWidget {
                   ),
                 );
               },
-              child: Container(
-                width: 300,
-                height: 100,
-                margin: EdgeInsets.all(25),
-                decoration: BoxDecoration(
-                  color: isDarkMode
-                      ? Theme.of(context).colorScheme.secondary
-                      : Theme.of(context).colorScheme.inversePrimary,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Center(
-                  child: Text(
-                    'Posts',
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: isDarkMode
-                          ? Theme.of(context).colorScheme.inversePrimary
-                          : Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                ),
-              ),
+              containerColor: isDarkMode
+                  ? Theme.of(context).colorScheme.secondary
+                  : Theme.of(context).colorScheme.inversePrimary,
+              text: "Posts",
+              textColor: isDarkMode
+                  ? Theme.of(context).colorScheme.inversePrimary
+                  : Theme.of(context).colorScheme.primary,
             ),
 
             // Comments
-            Container(
-              width: 300,
-              height: 100,
-              margin: EdgeInsets.all(25),
-              decoration: BoxDecoration(
-                color: isDarkMode
-                    ? Theme.of(context).colorScheme.secondary
-                    : Theme.of(context).colorScheme.inversePrimary,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(
-                child: Text(
-                  'Comments',
-                  style: TextStyle(
-                    fontSize: 24,
-                    color: isDarkMode
-                        ? Theme.of(context).colorScheme.inversePrimary
-                        : Theme.of(context).colorScheme.primary,
+            CollectonCard(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  PageTransition(
+                    child: PostForDeleteComments(),
+                    type: PageTransitionType.rightToLeft,
                   ),
-                ),
-              ),
+                );
+              },
+              containerColor: isDarkMode
+                  ? Theme.of(context).colorScheme.secondary
+                  : Theme.of(context).colorScheme.inversePrimary,
+              textColor: isDarkMode
+                  ? Theme.of(context).colorScheme.inversePrimary
+                  : Theme.of(context).colorScheme.primary,
+              text: "Comments",
             ),
 
             // Chat
-            Container(
-              width: 300,
-              height: 100,
-              margin: EdgeInsets.all(25),
-              decoration: BoxDecoration(
-                color: isDarkMode
-                    ? Theme.of(context).colorScheme.secondary
-                    : Theme.of(context).colorScheme.inversePrimary,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(
-                child: Text(
-                  'Chats',
-                  style: TextStyle(
-                    fontSize: 24,
-                    color: isDarkMode
-                        ? Theme.of(context).colorScheme.inversePrimary
-                        : Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-              ),
+            CollectonCard(
+              onTap: () {},
+              containerColor: isDarkMode
+                  ? Theme.of(context).colorScheme.secondary
+                  : Theme.of(context).colorScheme.inversePrimary,
+              textColor: isDarkMode
+                  ? Theme.of(context).colorScheme.inversePrimary
+                  : Theme.of(context).colorScheme.primary,
+              text: "Chats",
             ),
 
             // dark mode

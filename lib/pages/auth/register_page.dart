@@ -29,42 +29,42 @@ class RegisterPage extends StatelessWidget {
 
   // sign up user method
   void signUp(BuildContext context) async {
-    // show loading circle
     showLoadingCircle(context);
 
-    //password don't match -> tell user to fix
-    if (passwordController.text != confirmPasswordController.text) {
-      // pop loading circle
+    if (nameController.text.isEmpty ||
+        emailController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        confirmPasswordController.text.isEmpty) {
       close(context);
-      // show error message to user
+      displayMessageToUser('Fill all the fields', context);
+      return; // Ensuring early exit on error
+    }
+
+    if (passwordController.text != confirmPasswordController.text) {
+      close(context);
       displayMessageToUser("Passwords don't match", context);
-    } else if (passwordController.text == confirmPasswordController.text) {
-      //password match -> create user
-      try {
-        UserCredential userCredential = await _auth.registerEmailPassword(
-          emailController.text,
-          passwordController.text,
-        );
+      return; // Ensuring early exit on error
+    }
 
-        // Get user UID
-        String uid = userCredential.user!.uid;
+    try {
+      UserCredential userCredential = await _auth.registerEmailPassword(
+        emailController.text,
+        passwordController.text,
+      );
 
-        // after creating the user, create a new document in the cloud firestore called users
-        await _firestore.saveUserInfoInFirestore(
-            email: emailController.text, name: nameController.text);
+      String uid = userCredential.user!.uid;
 
-        // pop loading circle
-        close(context);
-      } on FirebaseAuthException catch (error) {
-        // pop loading circle
-        close(context);
+      await _firestore.saveUserInfoInFirestore(
+          email: emailController.text, name: nameController.text);
 
-        // display error message
-        displayMessageToUser(
-            error.message ?? "An unknown error occurred", context);
-      }
-    } else {
-      displayMessageToUser('Somethong went wrong', context);
+      close(context);
+    } on FirebaseAuthException catch (error) {
+      close(context);
+      displayMessageToUser(
+          error.message ?? "An unknown error occurred", context);
+    } catch (e) {
+      close(context);
+      displayMessageToUser('Something went wrong: $e', context);
     }
   }
 

@@ -146,11 +146,9 @@ class SettingsPage extends StatelessWidget {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
-                        backgroundColor: Theme.of(context).colorScheme.surface,
-                        content:
-
-                            // message
-                            Text(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.secondary,
+                        content: Text(
                           'Do you want to logout of your account?',
                           style: TextStyle(
                             fontSize: 24,
@@ -160,8 +158,10 @@ class SettingsPage extends StatelessWidget {
                           ),
                         ),
                         actions: [
-                          // cancel button
                           MaterialButton(
+                            color: isDarkMode
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.secondary,
                             child: Text(
                               'Cancel',
                               style: TextStyle(
@@ -173,11 +173,10 @@ class SettingsPage extends StatelessWidget {
                               ),
                             ),
                             onPressed: () {
-                              Navigator.pop(context);
+                              // pop
+                              close(context);
                             },
                           ),
-
-                          // logout button
                           MaterialButton(
                             color: Theme.of(context).colorScheme.error,
                             child: Text(
@@ -192,13 +191,14 @@ class SettingsPage extends StatelessWidget {
                               _auth.logout().whenComplete(
                                 () {
                                   Navigator.pushAndRemoveUntil(
-                                      context,
-                                      PageTransition(
-                                        child: AuthPage(),
-                                        type: PageTransitionType.bottomToTop,
-                                        duration: Durations.long1,
-                                      ),
-                                      (context) => false);
+                                    context,
+                                    PageTransition(
+                                      child: AuthPage(),
+                                      type: PageTransitionType.bottomToTop,
+                                      duration: Durations.long1,
+                                    ),
+                                    (context) => false,
+                                  );
                                 },
                               );
                             },

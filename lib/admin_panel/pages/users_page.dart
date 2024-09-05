@@ -24,15 +24,21 @@ class UsersPage extends StatelessWidget {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          backgroundColor: Theme.of(context).colorScheme.surface,
+          backgroundColor: Theme.of(context).colorScheme.secondary,
           content: Text(
             'Do you want to delete this account?',
             style: TextStyle(
-                fontSize: 24, color: Theme.of(context).colorScheme.primary),
+              fontSize: 24,
+              color: isDarkMode
+                  ? Theme.of(context).colorScheme.inversePrimary
+                  : Theme.of(context).colorScheme.primary,
+            ),
           ),
           actions: [
             MaterialButton(
-              color: Theme.of(context).colorScheme.secondary,
+              color: isDarkMode
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.secondary,
               child: Text(
                 'Cancel',
                 style: TextStyle(
@@ -51,19 +57,14 @@ class UsersPage extends StatelessWidget {
               child: Text(
                 'Delete',
                 style: TextStyle(
-                  color: isDarkMode
-                      ? Theme.of(context).colorScheme.inversePrimary
-                      : Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.inversePrimary,
                 ),
               ),
-              onPressed: () async {
-                // delete account user
-                await AuthService().deleteUser(userId).whenComplete(
-                  () {
-                    // pop
-                    close(context);
-                  },
-                );
+              onPressed: () {
+                auth.deleteUser(userId).whenComplete(() {
+                  //pop
+                  close(context);
+                });
               },
             ),
           ],

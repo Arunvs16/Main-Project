@@ -26,7 +26,11 @@ class EditProfile extends StatelessWidget {
       );
     }
     if (nameEditingController.text.isNotEmpty) {
-      await userDataProvider.editNameField(nameEditingController.text, "name");
+      await userDataProvider.editNameField(
+        nameEditingController.text,
+        "name",
+        
+      );
     }
   }
 

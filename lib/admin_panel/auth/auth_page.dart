@@ -27,7 +27,7 @@ class AdminAuthPage {
             content: Text(
               'Login Successfull',
               style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.inversePrimary,
               ),
               textAlign: TextAlign.center,
             ),

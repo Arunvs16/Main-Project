@@ -23,7 +23,7 @@ class AdminLoginPage extends StatelessWidget {
   final passwordController = TextEditingController();
 
   final String _adminEmail = 'admin@gmail.com';
-  final String _adminPassword = '123123123';
+  final String _adminPassword = '123123';
 
   // sign user in method
   Future<void> signInUser(BuildContext context) async {

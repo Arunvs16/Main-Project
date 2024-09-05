@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/theme_provider.dart';
+import 'package:main_project/components/helper_function.dart';
 import 'package:main_project/components/open_post_image.dart';
 import 'package:main_project/pages/profile_page.dart';
 import 'package:page_transition/page_transition.dart';
@@ -30,6 +31,8 @@ class OpenPostPage extends StatelessWidget {
   final user = FirebaseAuth.instance.currentUser!;
 
   void _deleteOptions(BuildContext context) {
+    bool isDarkMode =
+        Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
     showModalBottomSheet(
       backgroundColor: Theme.of(context).colorScheme.surface,
       context: context,
@@ -40,21 +43,64 @@ class OpenPostPage extends StatelessWidget {
               leading: Icon(Icons.delete),
               title: Text('Delete'),
               onTap: () {
-                FirebaseFirestore.instance
-                    .collection("Posts")
-                    .doc(postId)
-                    .delete()
-                    .whenComplete(
-                  () {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      PageTransition(
-                        child: ProfilePage(),
-                        type: PageTransitionType.fade,
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    backgroundColor: Theme.of(context).colorScheme.surface,
+                    content: Text(
+                      'Do you want to delete this post?',
+                      style: TextStyle(
+                        color: isDarkMode
+                            ? Theme.of(context).colorScheme.inversePrimary
+                            : Theme.of(context).colorScheme.primary,
                       ),
-                      (route) => false,
-                    );
-                  },
+                    ),
+                    actions: [
+                      // No button
+                      MaterialButton(
+                        color: isDarkMode
+                            ? Theme.of(context).colorScheme.inversePrimary
+                            : Theme.of(context).colorScheme.primary,
+                        child: Text(
+                          'No',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.inversePrimary,
+                          ),
+                        ),
+                        onPressed: () {
+                          close(context);
+                        },
+                      ),
+                      // yes button
+                      MaterialButton(
+                        color: Theme.of(context).colorScheme.error,
+                        child: Text(
+                          'Yes',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.inversePrimary,
+                          ),
+                        ),
+                        onPressed: () {
+                          FirebaseFirestore.instance
+                              .collection("Posts")
+                              .doc(postId)
+                              .delete()
+                              .whenComplete(
+                            () {
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                PageTransition(
+                                  child: ProfilePage(),
+                                  type: PageTransitionType.fade,
+                                ),
+                                (route) => false,
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 );
               },
             ),
@@ -125,12 +171,12 @@ class OpenPostPage extends StatelessWidget {
           // Display Posts
           Expanded(
             child: ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
               itemCount: 1, // Displaying only one post
               itemBuilder: (context, index) {
                 // Display data from the post
                 String timeAgo = timeago.format(timestamp.toDate());
 
-                
                 return OpenPostImage(
                   caption: caption,
                   username: "@$username",

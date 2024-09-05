@@ -6,11 +6,13 @@ import 'package:main_project/components/my_text_field.dart';
 import 'package:main_project/services/chat_services.dart';
 
 class ChatPage extends StatelessWidget {
-  final String receiverEmail;
+  final String receiverUsername;
+  final String receiverName;
   final String receiverId;
   ChatPage({
     super.key,
-    required this.receiverEmail,
+    required this.receiverUsername,
+    required this.receiverName,
     required this.receiverId,
   });
 
@@ -65,7 +67,8 @@ class ChatPage extends StatelessWidget {
               },
             ),
           ),
-          title: Text(receiverEmail),
+          title: Text(receiverUsername),
+          subtitle: Text(receiverName),
         ),
       ),
       body: Column(

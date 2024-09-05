@@ -2,32 +2,30 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:main_project/Providers/firestore_provider.dart';
 import 'package:main_project/Providers/theme_provider.dart';
-import 'package:main_project/components/comment_like_button.dart';
 import 'package:main_project/services/firestore.dart';
 import 'package:provider/provider.dart';
 
-class CommentCard extends StatelessWidget {
+class AdminCommentCard extends StatelessWidget {
   final String comment;
   final String time;
   final String username;
   final String postID;
   final String cmtId;
-  final List<String> likes;
+  final void Function()? onPressed;
 
-  const CommentCard({
+  const AdminCommentCard({
     super.key,
     required this.comment,
     required this.username,
     required this.postID,
-    required this.likes,
     required this.cmtId,
     required this.time,
+    required this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
     final currentUser = FirebaseAuth.instance.currentUser!;
-    final isLiked = likes.contains(currentUser.email);
     final firestore = Firestore();
 
     final commentDataProvider =
@@ -101,31 +99,17 @@ class CommentCard extends StatelessWidget {
               ),
             ],
           ),
-          Row(
-            children: [
-              Column(
-                children: [
-                  // Likes
-                  CommentLikeButton(
-                    isLiked: isLiked,
-                    onTap: () {
-                      commentDataProvider.toggleLike(
-                          postID, cmtId, currentUser.email!, !isLiked);
-                    },
-                  ),
-                  // Likes count
-                  Text(
-                    likes.length.toString(),
-                    style: TextStyle(
-                      color: isDarkMode
-                          ? Theme.of(context).colorScheme.inversePrimary
-                          : Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+          Spacer(),
+          // delete button
+          IconButton(
+            onPressed: onPressed,
+            icon: Icon(
+              Icons.delete,
+              color: isDarkMode
+                  ? Theme.of(context).colorScheme.inversePrimary
+                  : Theme.of(context).colorScheme.primary,
+            ),
+          )
         ],
       ),
     );

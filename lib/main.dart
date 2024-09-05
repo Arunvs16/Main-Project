@@ -40,7 +40,7 @@ void main() async {
         // toggle page
         ChangeNotifierProvider(create: (_) => AuthPageProvider()),
         ChangeNotifierProvider(create: (_) => PagesProvider()),
-        ChangeNotifierProvider(create: (_) => CommentDataProvider()),
+        ChangeNotifierProvider(create: (_) => PostAndCommentDataProvider()),
         ChangeNotifierProvider(create: (_) => UserDataProvider()),
       ],
       child: const MyApp(),

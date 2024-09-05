@@ -103,7 +103,8 @@ class ChatListPage extends StatelessWidget {
               PageTransition(
                 child: ChatPage(
                   receiverId: userData['uid'],
-                  receiverEmail: userData['username'],
+                  receiverUsername: userData['username'],
+                  receiverName: userData['name'],
                 ),
                 type: PageTransitionType.fade,
               ),
